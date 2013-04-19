@@ -17,7 +17,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:sec="http://www.springframework.org/schema/security"
 	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -28,31 +28,59 @@
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
 	http://www.springframework.org/schema/data/mongo
-    http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
+    http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+    http://www.springframework.org/schema/security 
+    http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
 	<!-- Configures support for @Controllers -->
 	<mvc:annotation-driven />
 
 	<!-- Scan controllers in this package -->
-	<context:component-scan
-		base-package="eu.trentorise.smartcampus" />
- 
-	<context:property-placeholder  location="classpath:profileservice.properties" />
-	
+	<context:component-scan base-package="eu.trentorise.smartcampus.vas.communicator" />
+
+	<context:property-placeholder location="classpath:communicator.properties" />
+
 	<bean id="acClient" class="eu.trentorise.smartcampus.ac.provider.filters.AcClient">
-        <property name="endpointUrl" value="http://localhost:8181/acService" />
-    </bean>
-    
-    <mongo:mongo host="${smartcampus.vas.web.mongo.host}" port="${smartcampus.vas.web.mongo.port}" /> 
+		<property name="endpointUrl" value="${ac.endpoint.url}" />
+	</bean>
+
+		
+	<mongo:mongo host="${smartcampus.vas.web.mongo.host}" port="${smartcampus.vas.web.mongo.port}" />
 
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
 		<constructor-arg ref="mongo" />
-		<constructor-arg name="databaseName" value="${smartcampus.vas.web.mongo.db}" />
+		<constructor-arg name="databaseName"
+			value="${smartcampus.vas.web.mongo.db}" />
 	</bean>
-
-
-    <bean id="profileStorage" class="eu.trentorise.smartcampus.profileservice.storage.ProfileStorage">
+	
+    <!-- STORAGES -->
+    <bean id="objectStorage"
+        class="eu.trentorise.smartcampus.vas.communicator.storage.CommunicatorStorage">
         <constructor-arg ref="mongoTemplate" />
     </bean>
 
+	<!-- AC SERVICE PROVIDER FILTER INTEGRATION -->
+	<sec:http entry-point-ref="forbEntryPoint" use-expressions="true">
+		<sec:custom-filter position="PRE_AUTH_FILTER" ref="authTokenFilter" />
+		<sec:intercept-url pattern="/**" access="isFullyAuthenticated()" />
+		<sec:anonymous enabled="true" />
+	</sec:http>
+
+	<bean id="forbEntryPoint"
+		class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint">
+	</bean>
+
+	<bean id="authTokenFilter"
+		class="eu.trentorise.smartcampus.ac.provider.filters.AcProviderFilter">
+		<property name="authenticationManager" ref="authenticationManager" />
+	</bean>
+
+	<sec:authentication-manager alias="authenticationManager">
+		<sec:authentication-provider ref="preauthAuthProvider" />
+	</sec:authentication-manager>
+
+	<bean id="preauthAuthProvider"
+		class="eu.trentorise.smartcampus.ac.provider.filters.SpringAcProvider">
+		<property name="endpointUrl" value="${ac.endpoint.url}" />
+	</bean>
 </beans>

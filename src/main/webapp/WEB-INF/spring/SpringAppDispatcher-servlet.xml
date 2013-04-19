@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2012-2013 Trento RISE Licensed under the Apache License, Version 
-	2.0 (the "License"); you may not use this file except in compliance with 
-	the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
-	Unless required by applicable law or agreed to in writing, software distributed 
-	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
-	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
-	the specific language governing permissions and limitations under the License. -->
+<!--
+  Copyright 2012-2013 Trento RISE
+  
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+         http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-	xmlns:sec="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+    xmlns:sec="http://www.springframework.org/schema/security"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
     http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
     http://www.springframework.org/schema/mvc 
     http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
@@ -28,9 +36,10 @@
 	<mvc:annotation-driven />
 
 	<!-- Scan controllers in this package -->
-	<context:component-scan base-package="eu.trentorise.smartcampus.communicatorservice" />
+	<context:component-scan
+		base-package="eu.trentorise.smartcampus.vas.communicator" />
 
-	<context:property-placeholder location="classpath:profileservice.properties" />
+	<context:property-placeholder location="classpath:communicator.properties" />
 
 	<bean id="acClient" class="eu.trentorise.smartcampus.ac.provider.filters.AcClient">
 		<property name="endpointUrl" value="${ac.endpoint.url}" />
@@ -43,10 +52,40 @@
 		<constructor-arg name="databaseName"
 			value="${smartcampus.vas.web.mongo.db}" />
 	</bean>
-
-	<bean id="profileStorage"
-		class="eu.trentorise.smartcampus.profileservice.storage.ProfileStorage">
+	
+	<!-- STORAGES -->
+	<bean id="objectStorage"
+		class="eu.trentorise.smartcampus.vas.communicator.storage.CommunicatorStorage">
 		<constructor-arg ref="mongoTemplate" />
 	</bean>
-
+	
+	<!-- DOMAIN -->
+	<bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="${smartcampus.vas.web.activeMQ.brokerURL}" />
+    </bean>
+    <bean id="eventProcessor" class="eu.trentorise.smartcampus.vas.communicator.domain.EventProcessorImpl">
+        <constructor-arg value="${messages.maxnum}"/>
+    </bean>
+  <!-- <bean id="domainEngineClient" class="it.sayservice.platform.client.jms.JMSDomainEngineClient" scope="singleton" destroy-method="destroy">
+        <constructor-arg>
+            <ref bean="connectionFactory" />
+        </constructor-arg>
+        <property name="clientId" value="vas_communicator_src_subscriber" />
+        <property name="domainUpdateListener" ref="eventProcessor" />
+    </bean>
+    <bean id="domainUpdateSubscriber" class="eu.trentorise.smartcampus.vas.communicator.domain.Subscriber">
+        <constructor-arg ref="domainEngineClient" />
+    </bean> -->
+	
+	<!-- EMAIL -->
+		<bean id="mailNotificationSender"
+		class="eu.trentorise.smartcampus.vas.communicator.util.MailNotificationSender">
+		<property name="mailSender" ref="mailSender" />
+	</bean>
+	
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${mail.smtp.host}" />
+		<property name="port" value="${mail.smtp.port}" />
+	</bean>
+	
 </beans>

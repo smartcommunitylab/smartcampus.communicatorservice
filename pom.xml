@@ -5,12 +5,24 @@
 	<artifactId>smartcampus.communicatorservice</artifactId>
 	<version>1.0</version>
 	<packaging>war</packaging>
+	<name>smartcampus.communicatorservice</name>
 
+
+	
 	<parent>
 		<groupId>eu.trentorise.smartcampus</groupId>
 		<artifactId>vas-web-conf</artifactId>
-		<version>1.4</version>
+		<version>1.3</version>
 	</parent>
+
+	<properties>
+		<spring.version>3.1.0.RELEASE</spring.version>
+		<ac-service-provider-api>1.1</ac-service-provider-api>
+		<ac-service-provider-filter>1.1</ac-service-provider-filter>
+		<service-engine-client>1.4</service-engine-client>
+
+		<appengine.target.version>1.7.6</appengine.target.version>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -21,23 +33,42 @@
 		</dependency>
 
 
-
-	
 		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.8.3</version>
-			<type>jar</type>
-			<scope>compile</scope>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
 		</dependency>
 
-		<!-- social dependencies -->
+
+		<!-- mongodb functionalities -->
+		<dependency>
+			<groupId>eu.trentorise.smartcampus</groupId>
+			<artifactId>syncstorage.web</artifactId>
+			<version>1.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>eu.trentorise.smartcampus</groupId>
 			<artifactId>smartcampus.vas.commons</artifactId>
 			<version>1.1</version>
-			<scope>compile</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.google.android.gcm</groupId>
+			<artifactId>gcm-server</artifactId>
+			<version>r3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+		<!-- app engine google <dependency> <groupId>com.google.appengine</groupId> 
+			<artifactId>appengine-api-1.0-sdk</artifactId> <version>${appengine.target.version}</version> 
+			</dependency> -->
 	</dependencies>
 
 	<build>
@@ -50,8 +81,11 @@
 					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
+			<!-- <plugin> <groupId>com.google.appengine</groupId> <artifactId>appengine-maven-plugin</artifactId> 
+				<version>${appengine.target.version}</version> </plugin> -->
 		</plugins>
-		<finalName>smartcampus.communicatorservice</finalName>
+
+		<finalName>communicator</finalName>
 	</build>
 
 	<repositories>
@@ -60,11 +94,5 @@
 			<url>http://repository.smartcampuslab.it/content/groups/public</url>
 		</repository>
 	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>SmartCampus</id>
-			<url>http://repository.smartcampuslab.it/content/groups/public</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 </project>
