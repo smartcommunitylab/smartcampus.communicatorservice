@@ -58,34 +58,5 @@
 		class="eu.trentorise.smartcampus.communicatorservice.storage.CommunicatorStorage">
 		<constructor-arg ref="mongoTemplate" />
 	</bean>
-	
-	<!-- DOMAIN -->
-	<bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="${smartcampus.vas.web.activeMQ.brokerURL}" />
-    </bean>
-    <bean id="eventProcessor" class="eu.trentorise.smartcampus.communicatorservice.domain.EventProcessorImpl">
-        <constructor-arg value="${messages.maxnum}"/>
-    </bean>
-  <!-- <bean id="domainEngineClient" class="it.sayservice.platform.client.jms.JMSDomainEngineClient" scope="singleton" destroy-method="destroy">
-        <constructor-arg>
-            <ref bean="connectionFactory" />
-        </constructor-arg>
-        <property name="clientId" value="vas_communicator_src_subscriber" />
-        <property name="domainUpdateListener" ref="eventProcessor" />
-    </bean>
-    <bean id="domainUpdateSubscriber" class="eu.trentorise.smartcampus.vas.communicator.domain.Subscriber">
-        <constructor-arg ref="domainEngineClient" />
-    </bean> -->
-	
-	<!-- EMAIL -->
-		<bean id="mailNotificationSender"
-		class="eu.trentorise.smartcampus.communicatorservice.util.MailNotificationSender">
-		<property name="mailSender" ref="mailSender" />
-	</bean>
-	
-	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-		<property name="host" value="${mail.smtp.host}" />
-		<property name="port" value="${mail.smtp.port}" />
-	</bean>
-	
+		
 </beans>

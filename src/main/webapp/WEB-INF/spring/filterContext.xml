@@ -46,20 +46,6 @@
 		 <sec:intercept-url pattern="/**" access="isFullyAuthenticated()" />
 	</sec:http>
 	
-	<!-- 
-		<sec:http entry-point-ref="forbEntryPoint" use-expressions="true" create-session="stateless">
-		<sec:custom-filter position="PRE_AUTH_FILTER" ref="authTokenFilter" />
-		<sec:intercept-url pattern="/login**" access="permitAll()" />
-        <sec:intercept-url pattern="/js/**" access="permitAll()" />
-        <sec:intercept-url pattern="/css/**" access="permitAll()" />
-        <sec:intercept-url pattern="/lib/**" access="permitAll()" />
-        <sec:intercept-url pattern="/search/**" access="permitAll()" />
-		<sec:intercept-url pattern="/**" access="isFullyAuthenticated()" />
-		<sec:anonymous enabled="true" />
-	</sec:http>
-	
-	 -->
-
 	<bean id="forbEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint">
 	</bean>
 
