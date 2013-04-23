@@ -37,7 +37,7 @@
 
 	<!-- Scan controllers in this package -->
 	<context:component-scan
-		base-package="eu.trentorise.smartcampus.vas.communicator" />
+		base-package="eu.trentorise.smartcampus.communicatorservice" />
 
 	<context:property-placeholder location="classpath:communicatorservice.properties" />
 
