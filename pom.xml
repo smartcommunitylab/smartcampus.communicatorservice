@@ -78,7 +78,7 @@
 				<version>${appengine.target.version}</version> </plugin> -->
 		</plugins>
 
-		<finalName>communicator</finalName>
+		<finalName>communicatorservice</finalName>
 	</build>
 
 	<repositories>
