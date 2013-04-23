@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package eu.trentorise.smartcampus.vas.communicator.controller;
+package eu.trentorise.smartcampus.communicatorservice.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,9 +42,9 @@ import eu.trentorise.smartcampus.exceptions.AlreadyExistException;
 import eu.trentorise.smartcampus.exceptions.NotFoundException;
 import eu.trentorise.smartcampus.exceptions.SmartCampusException;
 import eu.trentorise.smartcampus.presentation.common.exception.DataException;
-import eu.trentorise.smartcampus.vas.communicator.manager.AppAccountManager;
-import eu.trentorise.smartcampus.vas.communicator.manager.NotificationManager;
-import eu.trentorise.smartcampus.vas.communicator.manager.UserAccountManager;
+import eu.trentorise.smartcampus.communicatorservice.manager.AppAccountManager;
+import eu.trentorise.smartcampus.communicatorservice.manager.NotificationManager;
+import eu.trentorise.smartcampus.communicatorservice.manager.UserAccountManager;
 
 @Controller
 public class PushController extends SCController {

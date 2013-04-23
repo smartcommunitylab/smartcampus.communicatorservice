@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package eu.trentorise.smartcampus.vas.communicator.controller;
+package eu.trentorise.smartcampus.communicatorservice.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.trentorise.smartcampus.ac.provider.model.User;
 
-import eu.trentorise.smartcampus.vas.communicator.manager.PermissionManager;
-import eu.trentorise.smartcampus.vas.communicator.manager.UserAccountManager;
+import eu.trentorise.smartcampus.communicatorservice.manager.PermissionManager;
+import eu.trentorise.smartcampus.communicatorservice.manager.UserAccountManager;
 
 import eu.trentorise.smartcampus.communicator.model.ListUserAccount;
 

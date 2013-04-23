@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  ******************************************************************************/
-package eu.trentorise.smartcampus.vas.communicator.controller;
+package eu.trentorise.smartcampus.communicatorservice.controller;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -43,9 +43,9 @@ import eu.trentorise.smartcampus.controllers.SCController;
 import eu.trentorise.smartcampus.exceptions.SmartCampusException;
 import eu.trentorise.smartcampus.presentation.common.exception.DataException;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
-import eu.trentorise.smartcampus.vas.communicator.filter.NotificationFilter;
-import eu.trentorise.smartcampus.vas.communicator.manager.NotificationManager;
-import eu.trentorise.smartcampus.vas.communicator.manager.PermissionManager;
+import eu.trentorise.smartcampus.communicatorservice.filter.NotificationFilter;
+import eu.trentorise.smartcampus.communicatorservice.manager.NotificationManager;
+import eu.trentorise.smartcampus.communicatorservice.manager.PermissionManager;
 
 @Controller
 public class NotificationController extends SCController {

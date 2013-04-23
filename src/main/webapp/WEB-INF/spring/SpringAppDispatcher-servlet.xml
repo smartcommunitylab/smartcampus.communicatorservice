@@ -39,7 +39,7 @@
 	<context:component-scan
 		base-package="eu.trentorise.smartcampus.vas.communicator" />
 
-	<context:property-placeholder location="classpath:communicator.properties" />
+	<context:property-placeholder location="classpath:communicatorservice.properties" />
 
 	<bean id="acClient" class="eu.trentorise.smartcampus.ac.provider.filters.AcClient">
 		<property name="endpointUrl" value="${ac.endpoint.url}" />
@@ -55,7 +55,7 @@
 	
 	<!-- STORAGES -->
 	<bean id="objectStorage"
-		class="eu.trentorise.smartcampus.vas.communicator.storage.CommunicatorStorage">
+		class="eu.trentorise.smartcampus.communicatorservice.storage.CommunicatorStorage">
 		<constructor-arg ref="mongoTemplate" />
 	</bean>
 	
@@ -63,7 +63,7 @@
 	<bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="${smartcampus.vas.web.activeMQ.brokerURL}" />
     </bean>
-    <bean id="eventProcessor" class="eu.trentorise.smartcampus.vas.communicator.domain.EventProcessorImpl">
+    <bean id="eventProcessor" class="eu.trentorise.smartcampus.communicatorservice.domain.EventProcessorImpl">
         <constructor-arg value="${messages.maxnum}"/>
     </bean>
   <!-- <bean id="domainEngineClient" class="it.sayservice.platform.client.jms.JMSDomainEngineClient" scope="singleton" destroy-method="destroy">
@@ -79,7 +79,7 @@
 	
 	<!-- EMAIL -->
 		<bean id="mailNotificationSender"
-		class="eu.trentorise.smartcampus.vas.communicator.util.MailNotificationSender">
+		class="eu.trentorise.smartcampus.communicatorservice.util.MailNotificationSender">
 		<property name="mailSender" ref="mailSender" />
 	</bean>
 	

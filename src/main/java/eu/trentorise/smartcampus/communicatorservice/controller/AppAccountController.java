@@ -1,4 +1,4 @@
-package eu.trentorise.smartcampus.vas.communicator.controller;
+package eu.trentorise.smartcampus.communicatorservice.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,7 +16,7 @@ import eu.trentorise.smartcampus.controllers.SCController;
 import eu.trentorise.smartcampus.exceptions.AlreadyExistException;
 import eu.trentorise.smartcampus.exceptions.NotFoundException;
 import eu.trentorise.smartcampus.exceptions.SmartCampusException;
-import eu.trentorise.smartcampus.vas.communicator.manager.AppAccountManager;
+import eu.trentorise.smartcampus.communicatorservice.manager.AppAccountManager;
 
 @Controller
 public class AppAccountController extends SCController {

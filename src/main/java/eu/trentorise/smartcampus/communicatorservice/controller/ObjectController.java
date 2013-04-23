@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  ******************************************************************************/
-package eu.trentorise.smartcampus.vas.communicator.controller;
+package eu.trentorise.smartcampus.communicatorservice.controller;
 
 import java.io.IOException;
 import java.util.Map;
@@ -39,7 +39,7 @@ import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException
 import eu.trentorise.smartcampus.presentation.common.util.Util;
 import eu.trentorise.smartcampus.presentation.data.SyncData;
 import eu.trentorise.smartcampus.presentation.data.SyncDataRequest;
-import eu.trentorise.smartcampus.vas.communicator.manager.CommunicatorManager;
+import eu.trentorise.smartcampus.communicatorservice.manager.CommunicatorManager;
 
 @Controller
 public class ObjectController extends SCController {
