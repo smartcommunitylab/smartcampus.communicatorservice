@@ -38,14 +38,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.trentorise.smartcampus.ac.provider.model.User;
 import eu.trentorise.smartcampus.communicator.model.Notification;
-import eu.trentorise.smartcampus.communicator.model.NotificationAuthor;
+import eu.trentorise.smartcampus.communicatorservice.filter.NotificationFilter;
+import eu.trentorise.smartcampus.communicatorservice.manager.NotificationManager;
+import eu.trentorise.smartcampus.communicatorservice.manager.PermissionManager;
 import eu.trentorise.smartcampus.controllers.SCController;
 import eu.trentorise.smartcampus.exceptions.SmartCampusException;
 import eu.trentorise.smartcampus.presentation.common.exception.DataException;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
-import eu.trentorise.smartcampus.communicatorservice.filter.NotificationFilter;
-import eu.trentorise.smartcampus.communicatorservice.manager.NotificationManager;
-import eu.trentorise.smartcampus.communicatorservice.manager.PermissionManager;
 
 @Controller
 public class NotificationController extends SCController {
@@ -105,21 +104,7 @@ public class NotificationController extends SCController {
 		return notificationManager.delete(id);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/eu.trentorise.smartcampus.communicator.model.Notification")
-	public @ResponseBody
-	void create(HttpServletRequest request, HttpServletResponse response,
-			HttpSession session, @RequestBody Notification notification)
-			throws DataException, IOException, NotFoundException,
-			SmartCampusException {
-
-		User user = retrieveUser(request);
-		if (user == null) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		}
-		// attenzione non sempre utente puo' avere il servizio
-
-		notificationManager.create(notification);
-	}
+	
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/eu.trentorise.smartcampus.communicator.model.Notification/{id}")
 	public @ResponseBody

@@ -15,9 +15,16 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.communicatorservice.manager;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
 import eu.trentorise.smartcampus.ac.provider.model.User;
 
 public class Utils {
+	
+	@Autowired
+	@Value("${gcm.sender.id}")
+	public static String gcm_sender_id;
 
 	public static String userId(User user) {
 		return user.getId()+"";

@@ -18,7 +18,9 @@ package eu.trentorise.smartcampus.communicatorservice.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -50,14 +52,14 @@ import eu.trentorise.smartcampus.communicatorservice.manager.UserAccountManager;
 public class PushController extends SCController {
 
 	private static final String REGISTRATIONID_HEADER = "REGISTRATIONID";
-	
+
 	private static final String SENDERID_HEADER = "SENDERIDHEADER";
-	
+
 	private static final String APIKEY_HEADER = "APIKEYHEADER";
 
 	@Autowired
 	UserAccountManager userAccountManager;
-	
+
 	@Autowired
 	NotificationManager notificationManager;
 
@@ -94,14 +96,11 @@ public class PushController extends SCController {
 		if (apikey == null)
 			throw new NotFoundException();
 		// if app is not registered?use ours?
-		
-		
 
 		Configuration e = new Configuration(gcm_sender_key,
 				CloudToPushType.GOOGLE, apikey);
 		listConf.add(e);
-		e = new Configuration(gcm_sender_id,
-				CloudToPushType.GOOGLE, senderId);
+		e = new Configuration(gcm_sender_id, CloudToPushType.GOOGLE, senderId);
 		listConf.add(e);
 
 		AppAccount appAccount;
@@ -170,13 +169,13 @@ public class PushController extends SCController {
 		not.setType(appName);
 		not.setUser(String.valueOf(userAccount.getUserId()));
 		not.setId(null);
-		
+
 		try {
 			notificationManager.create(not);
 		} catch (eu.trentorise.smartcampus.presentation.common.exception.NotFoundException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		return true;
 
 	}
@@ -190,7 +189,6 @@ public class PushController extends SCController {
 
 		User user = retrieveUser(request);
 		UserAccount userAccount;
-	
 
 		List<UserAccount> listUser = userAccountManager.findByUserIdAndAppName(
 				user.getId(), appName);
@@ -200,10 +198,35 @@ public class PushController extends SCController {
 
 			userAccount.setConfigurations(null);
 			userAccountManager.update(userAccount);
-		
+
 		}
 
 		return true;
+
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/configuration/{appName}")
+	public @ResponseBody
+	Map<String, String> requestConfigurationToPush(HttpServletRequest request,
+			@PathVariable String appName, HttpSession session)
+			throws DataException, IOException, NotFoundException,
+			SmartCampusException, AlreadyExistException {
+		
+		Map<String, String> mapResult = new HashMap<String, String>();
+		User user = retrieveUser(request);
+		if (user != null) {
+			
+
+			AppAccount appAccount = appAccountManager.getAppAccount(appName);
+
+			if (appAccount != null && !appAccount.getConfigurations().isEmpty()) {
+				Configuration conf = appAccount.getGoogleConfigured();
+				mapResult.put(conf.getName(), conf.getValue());
+				return mapResult;
+
+			}
+		}
+		return mapResult;
 
 	}
 }

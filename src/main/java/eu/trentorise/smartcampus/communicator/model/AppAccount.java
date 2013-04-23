@@ -9,6 +9,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import eu.trentorise.smartcampus.communicatorservice.manager.Utils;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AppAccount {
@@ -52,5 +54,17 @@ public class AppAccount {
 		}
 		return result;
 	}
+	
+	public Configuration getGoogleConfigured() {
+		List<Configuration> list = getConfigurations();
+		Configuration result = null;
+		for (Configuration c : list) {
+			if (Utils.gcm_sender_id.compareTo(c.getName())==0)
+				result=c;
+		}
+		return result;
+	}
+	
+	
 
 }
