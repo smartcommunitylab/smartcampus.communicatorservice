@@ -1,5 +1,6 @@
 package eu.trentorise.smartcampus.communicatorservice.manager.pushservice.impl;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -71,9 +72,12 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		appAccount = listApp.get(0);
 
 		List<Configuration> listConfApp = appAccount.getConfigurations();
-		for (Configuration index : listConfApp) {
-			if (gcm_sender_key.compareTo(index.getName()) == 0) {
-				senderId = index.getValue();
+		Iterator<Configuration> indexConf=listConfApp.iterator();
+		
+		while (indexConf.hasNext() && senderId==null) {
+			Configuration conf=indexConf.next();
+			if (gcm_sender_key.compareTo(conf.getName()) == 0) {
+				senderId = conf.getValue();
 			}else{
 				throw new NotFoundException();
 			}

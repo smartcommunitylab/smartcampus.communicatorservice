@@ -29,16 +29,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.trentorise.smartcampus.ac.provider.model.User;
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
+import eu.trentorise.smartcampus.communicator.model.AppSignature;
 import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
 import eu.trentorise.smartcampus.communicator.model.Configuration;
 import eu.trentorise.smartcampus.communicator.model.Notification;
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
+import eu.trentorise.smartcampus.communicator.model.UserSignature;
 import eu.trentorise.smartcampus.controllers.SCController;
 import eu.trentorise.smartcampus.exceptions.AlreadyExistException;
 import eu.trentorise.smartcampus.exceptions.NotFoundException;
@@ -51,11 +54,7 @@ import eu.trentorise.smartcampus.communicatorservice.manager.UserAccountManager;
 @Controller
 public class PushController extends SCController {
 
-	private static final String REGISTRATIONID_HEADER = "REGISTRATIONID";
 
-	private static final String SENDERID_HEADER = "SENDERIDHEADER";
-
-	private static final String APIKEY_HEADER = "APIKEYHEADER";
 
 	@Autowired
 	UserAccountManager userAccountManager;
@@ -82,14 +81,19 @@ public class PushController extends SCController {
 	@Value("${gcm.registration.id.default.value}")
 	private String gcm_registration_id_default_value;
 
-	@RequestMapping(method = RequestMethod.POST, value = "/register/app/{appName}")
+	@RequestMapping(method = RequestMethod.POST, value = "/register/app")
 	public @ResponseBody
 	boolean registerAppToPush(HttpServletRequest request,
-			@PathVariable String appName, HttpSession session)
+			@RequestBody AppSignature signature, HttpSession session)
 			throws DataException, IOException, NotFoundException,
 			SmartCampusException, AlreadyExistException {
-		String senderId = request.getHeader(SENDERID_HEADER);
-		String apikey = request.getHeader(APIKEY_HEADER);
+		//String senderId = request.getHeader(SENDERID_HEADER);
+		//String apikey = request.getHeader(APIKEY_HEADER);
+		
+		String senderId = signature.getSenderId();
+		String apikey = signature.getApiKey();
+		String appName = signature.getAppName();
+		
 		List<Configuration> listConf = new ArrayList<Configuration>();
 
 		// set value of sender/serverside app registration code
@@ -120,16 +124,21 @@ public class PushController extends SCController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/register/user/{appName}")
+	@RequestMapping(method = RequestMethod.POST, value = "/register/user")
 	public @ResponseBody
 	boolean registerUserToPush(HttpServletRequest request,
-			@PathVariable String appName, HttpSession session)
+			@RequestBody UserSignature signature, HttpSession session)
 			throws DataException, IOException, NotFoundException,
 			SmartCampusException, AlreadyExistException {
 
 		User user = retrieveUser(request);
 		UserAccount userAccount;
-		String registrationId = request.getHeader(REGISTRATIONID_HEADER);
+		
+		
+		//String registrationId = request.getHeader(REGISTRATIONID_HEADER);
+		
+		String registrationId = signature.getRegistrationId();
+		String appName = signature.getAppName();
 
 		List<UserAccount> listUser = userAccountManager.findByUserIdAndAppName(
 				user.getId(), appName);
@@ -180,7 +189,7 @@ public class PushController extends SCController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/unregister/user/{appName}")
+	@RequestMapping(method = RequestMethod.GET, value = "/unregister/user/{appName}")
 	public @ResponseBody
 	boolean unregisterUserToPush(HttpServletRequest request,
 			@PathVariable String appName, HttpSession session)
