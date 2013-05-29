@@ -69,6 +69,9 @@ public class AppAccountManager {
 		Criteria crit = new Criteria();
 		crit.and("appName").is(appName);
 		Query query = Query.query(crit);
+		List x=db.find(query, AppAccount.class);
+		if(x.isEmpty())
+			return null;
 		return db.find(query, AppAccount.class).get(0);//todo
 	}
 

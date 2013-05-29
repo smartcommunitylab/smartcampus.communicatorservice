@@ -41,10 +41,10 @@
     </bean>	
 	
 	
-	<sec:http entry-point-ref="forbEntryPoint" use-expressions="true" create-session="stateless">
-		<sec:custom-filter position="PRE_AUTH_FILTER" ref="authTokenFilter" />
+<!-- 	<sec:http entry-point-ref="forbEntryPoint" use-expressions="true" create-session="stateless">
+		<sec:custom-filter position="PRE_AUTH_FILTER" ref="resourceFilter" />
 		 <sec:intercept-url pattern="/**" access="isFullyAuthenticated()" />
-	</sec:http>
+	</sec:http> -->
 	
 	<bean id="forbEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint">
 	</bean>
@@ -60,5 +60,7 @@
 	<bean id="preauthAuthProvider" class="eu.trentorise.smartcampus.ac.provider.filters.SpringAcProvider">
 		<constructor-arg value="${ac.service.address}" />
 	</bean>
+	
+	
 		
 </beans>

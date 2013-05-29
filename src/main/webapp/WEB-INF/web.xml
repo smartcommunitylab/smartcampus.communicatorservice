@@ -31,7 +31,8 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/spring/filterContext.xml</param-value>
+        <param-value>/WEB-INF/spring/filterContext.xml
+            /WEB-INF/spring/spring-security.xml</param-value>
     </context-param>
  
 
@@ -42,7 +43,7 @@
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>    
+    </filter-mapping>  
 
     <servlet>
         <servlet-name>SpringAppDispatcher</servlet-name>
