@@ -21,31 +21,47 @@
 		<access-denied-handler ref="oauthAccessDeniedHandler" />
 	</http>
 	
-	<import resource="datalayer.xml"/>
+	
 
 	<bean id="resourceFilter" class="eu.trentorise.smartcampus.resourceprovider.filter.ResourceFilter">
-	    <property name="tokenServices" ref="tokenServices" />
+	    <property name="dataSource" ref="dataSource" />
+	    <property name="uriManager" ref="uriManager" />
     </bean>	
 
 	
-	<bean id="tokenServices"
-		class="eu.trentorise.smartcampus.resourceprovider.filter.ResourceTokenServices">
-		 <constructor-arg ref="dataSource" />
-	</bean>
-	<!-- <bean id="tokenStore" class="eu.trentorise.smartcampus.permissionprovider.oauth.AutoJdbcTokenStore">
-        <constructor-arg ref="dataSource" />
+	
+	<!-- parameters by properties  -->
+	
+	
+	<bean id="uriManager" class="eu.trentorise.smartcampus.resourceprovider.uri.UriManager">
+	    <property name="contextPath" value="communicator" />
+	    <property name="serviceId" value="communciator.service" />
+    </bean>
+
+	
+	<bean id="dataSource" destroy-method="close"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/acprovider" />
+		<property name="username" value="ac" />
+		<property name="password" value="ac" />
 	</bean>
 	
-	 <bean id="clientDetails" class="eu.trentorise.smartcampus.permissionprovider.oauth.AutoJdbcClientDetailsServices">
-        <constructor-arg ref="dataSource" />
-    </bean>
-	 -->
+	
+	<context:component-scan base-package="eu.trentorise.smartcampus.resourceprovider"/>
+	
+	
+	
+	
 	
 
 	<bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
 		<property name="realmName" value="sparklr2" />
 	</bean>
 
+	
+	
+	
 	
 
 	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
@@ -85,5 +101,4 @@
 	</bean>
 
 	
-
 </beans>
