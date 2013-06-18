@@ -31,6 +31,8 @@
     http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
     http://www.springframework.org/schema/security 
   	http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+  	
+       <context:property-placeholder location="classpath:communicatorservice.properties" />
 
 	<bean class="org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer" />
 

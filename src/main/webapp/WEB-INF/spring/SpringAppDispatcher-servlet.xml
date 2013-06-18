@@ -46,17 +46,22 @@
 	</bean>
 
 	<mongo:mongo host="${smartcampus.vas.web.mongo.host}" port="${smartcampus.vas.web.mongo.port}" />
+	
+	<mongo:db-factory id="factory" dbname="${smartcampus.vas.web.mongo.db}"
+		mongo-ref="mongo" />
 
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-		<constructor-arg ref="mongo" />
+		<!-- <constructor-arg ref="mongo" />
 		<constructor-arg name="databaseName"
-			value="${smartcampus.vas.web.mongo.db}" />
+			value="${smartcampus.vas.web.mongo.db}" /> -->
+		<constructor-arg name="mongoDbFactory" ref="factory" />
 	</bean>
 	
 	<!-- STORAGES -->
 	<bean id="objectStorage"
 		class="eu.trentorise.smartcampus.communicatorservice.storage.CommunicatorStorage">
 		<constructor-arg ref="mongoTemplate" />
+		
 	</bean>
 		
 	
