@@ -34,8 +34,8 @@
 	
 	
 	<bean id="uriManager" class="eu.trentorise.smartcampus.resourceprovider.uri.UriManager">
-	    <property name="contextPath" value="communicator" />
-	    <property name="serviceId" value="communciator.service" />
+	    <property name="contextPath" value="/smartcampus.communicator" />
+	    <property name="serviceId" value="smartcampus.communicator" />
     </bean>
 
 	

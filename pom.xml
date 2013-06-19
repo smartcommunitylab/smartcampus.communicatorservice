@@ -2,10 +2,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.trentorise.smartcampus</groupId>
-	<artifactId>smartcampus.communicatorservice</artifactId>
+	<artifactId>smartcampus.communicator</artifactId>
 	<version>1.0</version>
 	<packaging>war</packaging>
-	<name>smartcampus.communicatorservice</name>
+	<name>smartcampus.communicator</name>
 	
 	<parent>
 		<groupId>eu.trentorise.smartcampus</groupId>
@@ -97,7 +97,7 @@
 				<version>${appengine.target.version}</version> </plugin> -->
 		</plugins>
 
-		<finalName>communicatorservice</finalName>
+		<finalName>smartcampus.communicator</finalName>
 	</build>
 
 	<repositories>
