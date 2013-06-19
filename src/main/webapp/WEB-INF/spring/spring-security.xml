@@ -1,44 +1,57 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:oauth="http://www.springframework.org/schema/security/oauth2" xmlns:sec="http://www.springframework.org/schema/security"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		 http://www.springframework.org/schema/context 
-    http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+    http://www.springframework.org/schema/context/spring-context-3.1.xsd 
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-<context:property-placeholder location="classpath:communicatorservice.properties" />
+	<context:property-placeholder
+		location="classpath:communicatorservice.properties" />
 
-	<!-- The OAuth2 protected resources are separated out into their own block so we can deal with authorization and error handling 
-		separately. This isn't mandatory, but it makes it easier to control the behaviour.${service.context} -->
+	<!-- The OAuth2 protected resources are separated out into their own block 
+		so we can deal with authorization and error handling separately. This isn't 
+		mandatory, but it makes it easier to control the behaviour.${service.context} -->
 	<http pattern="/**" create-session="never" entry-point-ref="oauthAuthenticationEntryPoint"
-		 xmlns="http://www.springframework.org/schema/security">
+		xmlns="http://www.springframework.org/schema/security">
 		<anonymous enabled="false" />
 		<custom-filter ref="resourceFilter" before="PRE_AUTH_FILTER" />
 		<access-denied-handler ref="oauthAccessDeniedHandler" />
 	</http>
 	
-	
+	<bean id="tagProviderResource" class="org.springframework.core.io.ClassPathResource">
+		<constructor-arg value="/resourceList.xml" />
+	</bean>
 
-	<bean id="resourceFilter" class="eu.trentorise.smartcampus.resourceprovider.filter.ResourceFilter">
-	    <property name="dataSource" ref="dataSource" />
-	    <property name="uriManager" ref="uriManager" />
-    </bean>	
+	<util:property-path id="tagProviderFile" path="tagProviderResource.file" />
 
-	
-	
-	<!-- parameters by properties  -->
-	
-	
-	<bean id="uriManager" class="eu.trentorise.smartcampus.resourceprovider.uri.UriManager">
-	    <property name="contextPath" value="/smartcampus.communicator" />
-	    <property name="serviceId" value="smartcampus.communicator" />
-    </bean>
 
-	
+
+	<bean id="resourceFilter"
+		class="eu.trentorise.smartcampus.resourceprovider.filter.ResourceFilter">
+		<property name="dataSource" ref="dataSource" />
+		<property name="uriManager" ref="uriManager" />
+	</bean>
+
+
+
+	<!-- parameters by properties -->
+
+
+	<bean id="uriManager"
+		class="eu.trentorise.smartcampus.resourceprovider.uri.UriManager">
+		<property name="contextPath" value="/smartcampus.communicator" />
+		<property name="serviceId" value="smartcampus.communicator" />
+		<property name="tagProviderFile" ref="tagProviderFile"/>
+	</bean>
+
+
 	<bean id="dataSource" destroy-method="close"
 		class="org.apache.commons.dbcp.BasicDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
@@ -46,33 +59,37 @@
 		<property name="username" value="ac" />
 		<property name="password" value="ac" />
 	</bean>
-	
-	
-	<context:component-scan base-package="eu.trentorise.smartcampus.resourceprovider"/>
-	
-	
-	
-	
-	
 
-	<bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
+
+	<context:component-scan base-package="eu.trentorise.smartcampus.resourceprovider" />
+
+
+
+
+
+
+	<bean id="oauthAuthenticationEntryPoint"
+		class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
 		<property name="realmName" value="sparklr2" />
 	</bean>
 
-	
-	
-	
-	
 
-	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
-	
+
+
+
+
+	<bean id="oauthAccessDeniedHandler"
+		class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
+
 
 	<mvc:annotation-driven />
 
 	<mvc:default-servlet-handler />
 
-	<sec:global-method-security pre-post-annotations="enabled" proxy-target-class="true">
-		<!--you could also wire in the expression handler up at the layer of the http filters. See https://jira.springsource.org/browse/SEC-1452 -->
+	<sec:global-method-security
+		pre-post-annotations="enabled" proxy-target-class="true">
+		<!--you could also wire in the expression handler up at the layer of the 
+			http filters. See https://jira.springsource.org/browse/SEC-1452 -->
 		<sec:expression-handler ref="oauthExpressionHandler" />
 	</sec:global-method-security>
 
@@ -81,24 +98,27 @@
 	<oauth:web-expression-handler id="oauthWebExpressionHandler" />
 
 	<!--Basic application beans. -->
-	<bean id="viewResolver" class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 		<property name="mediaTypes">
 			<map>
 				<entry key="json" value="application/json" />
 			</map>
 		</property>
 		<property name="viewResolvers">
-			<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			<bean
+				class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 				<property name="prefix" value="/WEB-INF/jsp/"></property>
 				<property name="suffix" value=".jsp"></property>
 			</bean>
 		</property>
 		<property name="defaultViews">
-			<bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+			<bean
+				class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
 				<property name="extractValueFromSingleKeyModel" value="true" />
 			</bean>
 		</property>
 	</bean>
 
-	
+
 </beans>
