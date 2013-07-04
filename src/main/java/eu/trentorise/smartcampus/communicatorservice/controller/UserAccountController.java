@@ -38,6 +38,8 @@ import eu.trentorise.smartcampus.communicator.model.UserAccount;
 import eu.trentorise.smartcampus.controllers.SCController;
 import eu.trentorise.smartcampus.exceptions.SmartCampusException;
 
+// TODO remove HTTP interface, internal use only if any
+
 @Controller
 public class UserAccountController extends SCController {
 

@@ -81,6 +81,9 @@ public class PushController extends SCController {
 	@Value("${gcm.registration.id.default.value}")
 	private String gcm_registration_id_default_value;
 
+	
+	// TODO appName or id required
+	// TODO client flow
 	@RequestMapping(method = RequestMethod.POST, value = "/register/app")
 	public @ResponseBody
 	boolean registerAppToPush(HttpServletRequest request,
@@ -124,6 +127,8 @@ public class PushController extends SCController {
 
 	}
 
+	// TODO appName or id required
+	// TODO client flow, userid required as input
 	@RequestMapping(method = RequestMethod.POST, value = "/register/user")
 	public @ResponseBody
 	boolean registerUserToPush(HttpServletRequest request,
@@ -189,6 +194,8 @@ public class PushController extends SCController {
 
 	}
 
+	// TODO DELETE method instead of GET
+	// TODO client flow, userid required as input
 	@RequestMapping(method = RequestMethod.GET, value = "/unregister/user/{appName}")
 	public @ResponseBody
 	boolean unregisterUserToPush(HttpServletRequest request,
@@ -214,6 +221,7 @@ public class PushController extends SCController {
 
 	}
 
+	//TODO client flow
 	@RequestMapping(method = RequestMethod.GET, value = "/configuration/{appName}")
 	public @ResponseBody
 	Map<String, String> requestConfigurationToPush(HttpServletRequest request,
