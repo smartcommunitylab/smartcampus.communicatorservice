@@ -20,56 +20,56 @@
 
 	</resource>
 	<resourceMapping id="communicator.appaccount" uri="communicator.appacount"
-		authority="CLIENT" accessibleByOthers="false">
+		>
 
 	</resourceMapping>
 	<resourceMapping id="communicator.useraccount" uri="communicator.useracount"
-		authority="CLIENT">
+		>
 
 	</resourceMapping>
 	<resourceMapping id="communicator.notification" uri="communicator.notification"
-		authority="USER">
+		>
 
 	</resourceMapping>
 	<resourceMapping id="communicator.notification.manage"
-		uri="communicator.notification.{capp}.manage" authority="USER">
+		uri="communicator.notification.{capp}.manage" method="GET">
 		
 	</resourceMapping>
 	<resourceMapping id="communicator.notification.read.all"
 		uri="communicator.notification.read.all"
 		pathPatterns="/smartcampus.communicator/eu.trentorise.smartcampus.communicator.model.Notification"
-		authority="USER">
+		method="GET">
 
 	</resourceMapping>
 	<resourceMapping id="communicator.notification.read"
 		uri="communicator.notification.read"
 		pathPatterns="/smartcampus.communicator/eu.trentorise.smartcampus.communicator.model.Notification/{idn}"
-		authority="USER">
+		method="GET">
 
 	</resourceMapping>
 
-	<resourceMapping id="communicator.configuration" uri="communicator.configuration.{capp}"
-		authority="USER" pathPatterns="/smartcampus.communicator/configuration/{capp}">
+	<resourceMapping id="communicator.configuration" uri="communicator.configuration.{capp}" method="GET"
+		 pathPatterns="/smartcampus.communicator/configuration/{capp}">
 
 	</resourceMapping>
 	<resourceMapping id="communicator.send" uri="communicator.send.{capp}"
-		authority="USER" pathPatterns="/smartcampus.communicator/send/user/{capp}">
+		 pathPatterns="/smartcampus.communicator/send/user/{capp}" method="POST">
 
 	</resourceMapping>
 
 	<resourceMapping id="communicator.register.app" uri="communicator.register.{capp}"
-		authority="USER" pathPatterns="/smartcampus.communicator/register/app">
+		 pathPatterns="/smartcampus.communicator/register/app" method="POST">
 
 	</resourceMapping>
 
 	<resourceMapping id="communicator.register.user" uri="communicator.register.user"
-		authority="USER" pathPatterns="/smartcampus.communicator/register/user">
+	 pathPatterns="/smartcampus.communicator/register/user" method="POST">
 
 	</resourceMapping>
 
 	<resourceMapping id="communicator.unregister.user"
-		uri="communicator.unregister.user.{capp}" authority="USER"
-		pathPatterns="/smartcampus.communicator/unregister/user/{capp}">
+		uri="communicator.unregister.user.{capp}" 
+		pathPatterns="/smartcampus.communicator/unregister/user/{capp}" method="GET">
 
 	</resourceMapping>
 
