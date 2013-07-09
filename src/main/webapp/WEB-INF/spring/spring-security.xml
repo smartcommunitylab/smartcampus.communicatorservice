@@ -14,111 +14,46 @@
 
 	<context:property-placeholder
 		location="classpath:communicatorservice.properties" />
-
-	<!-- The OAuth2 protected resources are separated out into their own block 
-		so we can deal with authorization and error handling separately. This isn't 
-		mandatory, but it makes it easier to control the behaviour.${service.context} -->
-	<http pattern="/**" create-session="never" entry-point-ref="oauthAuthenticationEntryPoint"
-		xmlns="http://www.springframework.org/schema/security">
+<http create-session="never" entry-point-ref="oauthAuthenticationEntryPoint"
+		 xmlns="http://www.springframework.org/schema/security" authentication-manager-ref="resourceAuthenticationManager">
 		<anonymous enabled="false" />
+        <sec:intercept-url  pattern="/extprofile/**" access="IS_AUTHENTICATED_FULLY" />
 		<custom-filter ref="resourceFilter" before="PRE_AUTH_FILTER" />
 		<access-denied-handler ref="oauthAccessDeniedHandler" />
 	</http>
+
+    <bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint"/>
+    <bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
 	
-	<bean id="tagProviderResource" class="org.springframework.core.io.ClassPathResource">
-		<constructor-arg value="/resourceList.xml" />
-	</bean>
+	<bean id="resourceFilter" class="eu.trentorise.smartcampus.resourceprovider.filter.ResourceFilter">
+        <property name="authenticationManager" ref="resourceAuthenticationManager"/>
+    </bean>	
 
-	<util:property-path id="tagProviderFile" path="tagProviderResource.file" />
-
-
-
-	<bean id="resourceFilter"
-		class="eu.trentorise.smartcampus.resourceprovider.filter.ResourceFilter">
-		<property name="dataSource" ref="dataSource" />
-		<property name="uriManager" ref="uriManager" />
-	</bean>
-
-
-
-	<!-- parameters by properties -->
-
-
-	<bean id="uriManager"
-		class="eu.trentorise.smartcampus.resourceprovider.uri.UriManager">
-		<property name="contextPath" value="/smartcampus.communicator" />
-		<property name="serviceId" value="smartcampus.communicator" />
-		<property name="tagProviderFile" ref="tagProviderFile"/>
-	</bean>
-
-
+	<bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.JdbcTokenStore">
+        <constructor-arg ref="dataSource" />
+    </bean>
+	
 	<bean id="dataSource" destroy-method="close"
 		class="org.apache.commons.dbcp.BasicDataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/acprovider" />
-		<property name="username" value="ac" />
-		<property name="password" value="ac" />
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
 	</bean>
+	
+	<bean id="resourceAuthenticationManager" class="eu.trentorise.smartcampus.resourceprovider.filter.ResourceAuthenticationManager">
+        <property name="tokenStore" ref="tokenStore"/>
+        <property name="authServices" ref="authServices"/>
+    </bean>
 
-
-	<context:component-scan base-package="eu.trentorise.smartcampus.resourceprovider" />
-
-
-
-
-
-
-	<bean id="oauthAuthenticationEntryPoint"
-		class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
-		<property name="realmName" value="sparklr2" />
-	</bean>
-
-
-
-
-
-
-	<bean id="oauthAccessDeniedHandler"
-		class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
-
+    <bean id="authServices" class="eu.trentorise.smartcampus.resourceprovider.jdbc.JdbcServices">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+	
+	
+	<context:component-scan base-package="eu.trentorise.smartcampus.resourceprovider"/>
 
 	<mvc:annotation-driven />
-
-	<mvc:default-servlet-handler />
-
-	<sec:global-method-security
-		pre-post-annotations="enabled" proxy-target-class="true">
-		<!--you could also wire in the expression handler up at the layer of the 
-			http filters. See https://jira.springsource.org/browse/SEC-1452 -->
-		<sec:expression-handler ref="oauthExpressionHandler" />
-	</sec:global-method-security>
-
-	<oauth:expression-handler id="oauthExpressionHandler" />
-
-	<oauth:web-expression-handler id="oauthWebExpressionHandler" />
-
-	<!--Basic application beans. -->
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
-		<property name="mediaTypes">
-			<map>
-				<entry key="json" value="application/json" />
-			</map>
-		</property>
-		<property name="viewResolvers">
-			<bean
-				class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-				<property name="prefix" value="/WEB-INF/jsp/"></property>
-				<property name="suffix" value=".jsp"></property>
-			</bean>
-		</property>
-		<property name="defaultViews">
-			<bean
-				class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
-				<property name="extractValueFromSingleKeyModel" value="true" />
-			</bean>
-		</property>
-	</bean>
 
 
 </beans>
