@@ -21,7 +21,8 @@ import org.springframework.stereotype.Service;
 
 import eu.trentorise.smartcampus.ac.provider.model.User;
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
-import eu.trentorise.smartcampus.exceptions.NotFoundException;
+import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
+
 
 /**
  * <i>PermissionManager</i> checks the permissions about resources and storage

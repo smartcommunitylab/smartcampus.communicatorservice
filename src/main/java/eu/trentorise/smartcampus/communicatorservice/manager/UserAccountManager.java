@@ -27,6 +27,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import eu.trentorise.smartcampus.exceptions.*;
+import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 import eu.trentorise.smartcampus.communicator.model.Configuration;
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
 
@@ -91,9 +92,9 @@ public class UserAccountManager {
 		return db.findAll(UserAccount.class);
 	}
 
-	public List<UserAccount> findUserAccounts(String appName) {
+	public List<UserAccount> findUserAccounts(String appId) {
 		Criteria criteria = new Criteria();
-		criteria.and("appName").is(appName);
+		criteria.and("appId").is(appId);
 		return db.find(Query.query(criteria), UserAccount.class);
 	}
 
@@ -119,10 +120,10 @@ public class UserAccountManager {
 	 *           
 	 * @return a list of UserAccount of the given user id and appName
 	 */
-	public List<UserAccount> findByUserIdAndAppName(long userid,String appName) {
+	public List<UserAccount> findByUserIdAndAppName(String userid,String appId) {
 		Criteria criteria = new Criteria();
 		criteria.and("userId").is(userid);
-		criteria.and("appName").is(appName);
+		criteria.and("appId").is(appId);
 		return db.find(Query.query(criteria), UserAccount.class);
 	}
 

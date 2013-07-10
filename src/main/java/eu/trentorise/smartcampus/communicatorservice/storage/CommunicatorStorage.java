@@ -31,25 +31,37 @@ import eu.trentorise.smartcampus.communicatorservice.filter.NotificationFilter;
 
 public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 
+	private static final int FIRST = 0;
+
 	public CommunicatorStorage(MongoOperations mongoTemplate) {
 		super(mongoTemplate);
 	}
 
-	public <T extends BasicObject> void deleteObjectPermanently(T object) throws DataException {
-		mongoTemplate.remove(Query.query(Criteria.where("id").is(object.getId())), getObjectClass());
+	public <T extends BasicObject> void deleteObjectPermanently(T object)
+			throws DataException {
+		mongoTemplate.remove(
+				Query.query(Criteria.where("id").is(object.getId())),
+				getObjectClass());
 	}
 
-	public <T extends BasicObject> void deleteObjectsPermanently(Class<T> cls, String user) throws DataException {
-		mongoTemplate.remove(Query.query(Criteria.where("user").is(user).and("type").is(cls.getCanonicalName())), getObjectClass());
+	public <T extends BasicObject> void deleteObjectsPermanently(Class<T> cls,
+			String user) throws DataException {
+		mongoTemplate.remove(
+				Query.query(Criteria.where("user").is(user).and("type")
+						.is(cls.getCanonicalName())), getObjectClass());
 	}
-	
-	public List<Notification> searchNotifications(String user, Long since, Integer position, Integer count, NotificationFilter infilter) {
-		NotificationFilter filter = infilter == null ? new NotificationFilter() : infilter;  
-		List<Notification> list = find(Query.query(createNotificationSearchWithTypeCriteria(user, since, filter)), Notification.class);
+
+	public List<Notification> searchNotifications(String user, String capp, Long since,
+			Integer position, Integer count, NotificationFilter infilter) {
+		NotificationFilter filter = infilter == null ? new NotificationFilter()
+				: infilter;
+		List<Notification> list = find(
+				Query.query(createNotificationSearchWithTypeCriteria(user,capp,
+						since, filter)), Notification.class);
 		if (filter.getOrdering() != null) {
 			switch (filter.getOrdering()) {
 			case ORDER_BY_ARRIVAL:
-				Collections.sort(list,arrivalDateComparator);
+				Collections.sort(list, arrivalDateComparator);
 				break;
 			case ORDER_BY_REL_PLACE:
 			case ORDER_BY_REL_TIME:
@@ -57,23 +69,28 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 			default:
 				break;
 			}
+		} else {
+			Collections.sort(list, arrivalDateComparator);
 		}
-		else {
-			Collections.sort(list,arrivalDateComparator);
-		}
-		if (position != null && count != null && position > 0 && count > 0 && list.size() > position) {
-			return list.subList(position, Math.min(list.size(), position+count));
+		if (position != null && count != null && position > 0 && count > 0
+				&& list.size() > position) {
+			return list.subList(position,
+					Math.min(list.size(), position + count));
 		}
 		return list;
 	}
-	
-	private Criteria createNotificationSearchWithTypeCriteria(String user, Long since, NotificationFilter filter) {
+
+	private Criteria createNotificationSearchWithTypeCriteria(String user,
+			String capp, Long since, NotificationFilter filter) {
 		Criteria criteria = new Criteria();
 		// user is obligatory
 		criteria.and("user").is(user);
 		// only non-deleted
 		criteria.and("deleted").is(false);
-	
+
+		if(capp!=null && capp.compareTo("")!=0){
+			criteria.and("author.appId").is(capp);
+		}
 		if (since != null) {
 			criteria.and("content.timestamp").gte(since);
 		}
@@ -90,7 +107,11 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 			criteria.and("content.labelIds").is(filter.getLabelId());
 		}
 		if (filter.getSearchText() != null) {
-			criteria.orOperator(new Criteria().and("content.title").regex(filter.getSearchText(), "i"),new Criteria().and("content.description").regex(filter.getSearchText(), "i"));
+			criteria.orOperator(
+					new Criteria().and("content.title").regex(
+							filter.getSearchText(), "i"),
+					new Criteria().and("content.description").regex(
+							filter.getSearchText(), "i"));
 		}
 		return criteria;
 	}
@@ -98,9 +119,31 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 	private Comparator<Notification> arrivalDateComparator = new Comparator<Notification>() {
 		@Override
 		public int compare(Notification o1, Notification o2) {
-			return (int)(o1.getTimestamp() - o2.getTimestamp()); 
+			return (int) (o1.getTimestamp() - o2.getTimestamp());
 		}
 	};
-	
-	
+
+	public Notification getObjectByIdAndApp(String id, String capp,
+			Class<Notification> class1) {
+
+		Criteria criteria = new Criteria();
+		criteria.and("id").is(id);
+		if(capp!=null && capp.compareTo("")!=0){
+			criteria.and("author.appId").is(capp);
+		}
+		criteria.and("deleted").is(false);
+		return find(Query.query(criteria), Notification.class).get(FIRST);
+	}
+
+	public Notification getObjectByIdAndUser(String id, String userId,
+			Class<Notification> class1) {
+		Criteria criteria = new Criteria();
+		criteria.and("id").is(id);
+		if(userId!=null && userId.compareTo("")!=0){
+			criteria.and("author.userId").is(userId);
+		}
+		criteria.and("deleted").is(false);
+		return find(Query.query(criteria), Notification.class).get(FIRST);
+	}
+
 }

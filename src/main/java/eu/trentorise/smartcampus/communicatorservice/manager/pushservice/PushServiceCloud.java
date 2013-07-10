@@ -1,7 +1,8 @@
 package eu.trentorise.smartcampus.communicatorservice.manager.pushservice;
 
 import eu.trentorise.smartcampus.communicator.model.Notification;
-import eu.trentorise.smartcampus.exceptions.NotFoundException;
+import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
+
 
 
 

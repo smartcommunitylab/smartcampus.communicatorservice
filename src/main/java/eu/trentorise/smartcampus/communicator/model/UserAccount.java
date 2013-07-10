@@ -16,6 +16,7 @@
 
 package eu.trentorise.smartcampus.communicator.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -40,9 +41,9 @@ public class UserAccount {
 	/**
 	 * id of the user
 	 */
-	private long userId;
+	private String userId;
 
-	private String appName;
+	private String appId;
 
 	/**
 	 * list of the configurations of the account storage
@@ -51,11 +52,11 @@ public class UserAccount {
 	@XmlElement(name = "configuration")
 	private List<Configuration> configurations;
 
-	public long getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(long userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
@@ -75,12 +76,32 @@ public class UserAccount {
 		this.id = id;
 	}
 
-	public String getAppName() {
-		return appName;
+	public String getAppId() {
+		return appId;
 	}
 
-	public void setAppName(String appName) {
-		this.appName = appName;
+	public void setAppId(String appId) {
+		this.appId = appId;
 	}
+	public List<CloudToPushType> getCloudToPushTypeConfigured() {
+		List<Configuration> list = getConfigurations();
+		List<CloudToPushType> result = new ArrayList<CloudToPushType>();
+		for (Configuration c : list) {
+			if (c.getKey() != null)
+				result.add(c.getKey());
+		}
+		return result;
+	}
+
+	public Configuration getSpecificConfiguration(CloudToPushType conf) {
+		List<Configuration> list = getConfigurations();
+		Configuration result = null;
+		for (Configuration c : list) {
+			if (conf.compareTo(c.getKey()) == 0)
+				result = c;
+		}
+		return result;
+	}
+	
 
 }

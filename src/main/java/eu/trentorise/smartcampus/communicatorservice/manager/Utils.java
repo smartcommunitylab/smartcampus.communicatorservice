@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import eu.trentorise.smartcampus.ac.provider.model.User;
+import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
 
 public class Utils {
 	
@@ -28,6 +29,16 @@ public class Utils {
 
 	public static String userId(User user) {
 		return user.getId()+"";
+	}
+
+	public static CloudToPushType checkCloudToPushType(String conf) {
+		String result=conf.toUpperCase();
+		for(CloudToPushType x : CloudToPushType.values()){
+			if(x.name().compareTo(result)==0){
+				return x;
+			}
+		}
+		return CloudToPushType.GOOGLE;
 	} 
 
 }

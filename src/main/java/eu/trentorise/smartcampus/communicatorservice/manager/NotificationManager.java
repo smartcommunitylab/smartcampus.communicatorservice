@@ -20,7 +20,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import eu.trentorise.smartcampus.ac.provider.model.User;
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
 import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
 import eu.trentorise.smartcampus.communicator.model.Notification;
@@ -41,18 +40,15 @@ public class NotificationManager {
 
 	@Autowired
 	AppAccountManager appAccountManager;
-	
+
 	@Autowired
 	GoogleCloudMessengerManager googleManager;
-	
+
 	@Autowired
 	ApplePushNotificationServiceManager appleManager;
-	
-	
-	
 
-	public void create(Notification notification) throws DataException,
-			NotFoundException {
+	public void create(Notification notification) throws 
+			NotFoundException, DataException {
 		storage.storeObject(notification);
 
 		List<AppAccount> listApp = appAccountManager
@@ -86,28 +82,44 @@ public class NotificationManager {
 
 				try {
 					servicePush.sendToCloud(notification);
-				} catch (eu.trentorise.smartcampus.exceptions.NotFoundException e) {
+				} catch (NotFoundException e) {
 					throw new NotFoundException(e);
 				}
 			}
 		}
 	}
 
-	public boolean delete(String id) throws NotFoundException, DataException {
-		storage.deleteObject(storage.getObjectById(id, Notification.class));
+	public boolean deleteByApp(String id,String capp) throws NotFoundException, DataException {
+		storage.deleteObject(storage.getObjectByIdAndApp(id, capp,Notification.class));
+		return true;
+	}
+	
+	public boolean deleteByUser(String id,String userId) throws NotFoundException, DataException {
+		storage.deleteObject(storage.getObjectByIdAndUser(id, userId,Notification.class));
 		return true;
 	}
 
-	public List<Notification> get(User user, Long since, Integer position,
+	public List<Notification> get(String userId, String capp, Long since, Integer position,
 			Integer count, NotificationFilter filter) throws DataException {
-		return storage.searchNotifications(Utils.userId(user), since, position,
-				count, filter);
+		return storage.searchNotifications(userId,capp, since, position, count,
+				filter);
 	}
 
-	public Notification getById(String id) throws NotFoundException,
-			DataException {
+	public Notification getById(String id) throws NotFoundException, DataException 
+			 {
 		return storage.getObjectById(id, Notification.class);
 	}
+
+	public Notification getByIdAndApp(String id, String capp)
+			throws NotFoundException, DataException {
+		return storage.getObjectByIdAndApp(id, capp, Notification.class);
+	}
+	
+	public Notification getByIdAndUser(String id, String userId)
+			throws NotFoundException, DataException {
+		return storage.getObjectByIdAndUser(id, userId, Notification.class);
+	}
+
 
 	/**
 	 * set starred value to given value
@@ -117,9 +129,13 @@ public class NotificationManager {
 	 * @throws NotFoundException
 	 * @throws DataException
 	 */
-	public void starred(String id, boolean starredStatus)
+	public void starredByApp(String id,String capp, boolean starredStatus)
 			throws NotFoundException, DataException {
-		changeStarredStatus(id, starredStatus);
+		changeStarredStatusByApp(id,capp, starredStatus);
+	}
+	public void starredByUser(String id,String userid, boolean starredStatus)
+			throws NotFoundException, DataException {
+		changeStarredStatusByUser(id,userid, starredStatus);
 	}
 
 	/**
@@ -130,28 +146,49 @@ public class NotificationManager {
 	 * @throws NotFoundException
 	 * @throws DataException
 	 */
-	public void starred(String id) throws NotFoundException, DataException {
-		changeStarredStatus(id, true);
+	public void starredByApp(String id,String capp) throws NotFoundException, DataException {
+		changeStarredStatusByApp(id,capp,true);
+	}
+	
+	public void starredByUser(String id,String userId) throws NotFoundException, DataException {
+		changeStarredStatusByUser(id,userId,true);
 	}
 
-	private void changeStarredStatus(String id, boolean starred)
+	private void changeStarredStatusByUser(String id,String userId, boolean starred)
 			throws NotFoundException, DataException {
-		Notification notification = storage.getObjectById(id,
+		Notification notification = storage.getObjectByIdAndUser(id, userId,
+				Notification.class);
+		notification.setStarred(starred);
+		storage.storeObject(notification);
+	}
+	
+	private void changeStarredStatusByApp(String id,String capp, boolean starred)
+			throws NotFoundException, DataException {
+		Notification notification = storage.getObjectByIdAndApp(id, capp,
 				Notification.class);
 		notification.setStarred(starred);
 		storage.storeObject(notification);
 	}
 
-	public void updateLabels(String id, List<String> labelIds)
+	public void updateLabelsByApp(String id,String capp, List<String> labelIds)
 			throws NotFoundException, DataException {
-		Notification notification = storage.getObjectById(id,
+		Notification notification = storage.getObjectByIdAndApp(id, capp,
+				Notification.class);
+		notification.setLabelIds(labelIds);
+		storage.storeObject(notification);
+	}
+	
+
+	public void updateLabelsByUser(String id,String userid, List<String> labelIds)
+			throws NotFoundException, DataException {
+		Notification notification = storage.getObjectByIdAndUser(id, userid,
 				Notification.class);
 		notification.setLabelIds(labelIds);
 		storage.storeObject(notification);
 	}
 
-	public void deleteUserMessages(User user) throws DataException {
-		storage.deleteObjectsPermanently(Notification.class, Utils.userId(user));
+	public void deleteUserMessages(String userId) throws DataException {
+		storage.deleteObjectsPermanently(Notification.class, userId);
 	}
 
 }

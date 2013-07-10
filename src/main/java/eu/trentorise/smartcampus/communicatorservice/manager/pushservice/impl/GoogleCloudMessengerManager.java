@@ -14,13 +14,15 @@ import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
+import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
 import eu.trentorise.smartcampus.communicator.model.Configuration;
 import eu.trentorise.smartcampus.communicator.model.Notification;
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
-import eu.trentorise.smartcampus.exceptions.NotFoundException;
+
 import eu.trentorise.smartcampus.communicatorservice.manager.AppAccountManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.UserAccountManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.pushservice.PushServiceCloud;
+import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 
 @Component
 public class GoogleCloudMessengerManager implements PushServiceCloud {
@@ -76,8 +78,8 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		
 		while (indexConf.hasNext() && senderId==null) {
 			Configuration conf=indexConf.next();
-			if (gcm_sender_key.compareTo(conf.getName()) == 0) {
-				senderId = conf.getValue();
+			if (CloudToPushType.GOOGLE.compareTo(conf.getKey()) == 0) {
+				senderId = conf.getListValue().get(gcm_sender_id);
 			}else{
 				throw new NotFoundException();
 			}
@@ -88,16 +90,16 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		String devices = "";
 
 		List<UserAccount> listUserAccount = userAccountManager
-				.findByUserIdAndAppName(Long.valueOf(notification.getUser())
-						.longValue(), senderAppName);
+				.findByUserIdAndAppName(notification.getUser()
+						, senderAppName);
 
 		UserAccount userAccountSelected = listUserAccount.get(0);
 		Configuration configurationSelected = new Configuration();
 
 		List<Configuration> listConfUser = userAccountSelected.getConfigurations();
 		for (Configuration index : listConfUser) {
-			if (gcm_registration_id_default_key.compareTo(index.getName()) == 0) {
-				devices = index.getValue();
+			if (CloudToPushType.GOOGLE.compareTo(index.getKey()) == 0) {
+				devices = index.getListValue().get(gcm_registration_id_default_key);
 				configurationSelected = index;
 			}
 		}
@@ -119,7 +121,8 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 				String canonicalRegId = result.getCanonicalRegistrationId();
 				if (canonicalRegId != null) {
 					// update new registrationid in my database
-					configurationSelected.setValue(canonicalRegId);
+					configurationSelected.getListValue().remove(gcm_registration_id_default_key);
+					configurationSelected.getListValue().put(gcm_registration_id_default_key, canonicalRegId);
 					userAccountManager.update(userAccountSelected);
 					return true;
 				} else {
@@ -130,8 +133,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 				if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
 					// remove appconfigutaion on this user account
 					userAccountSelected.getConfigurations().remove(
-							configurationSelected);
-					userAccountManager.delete(userAccountSelected);
+							configurationSelected);					
 					return false;
 				}
 			}

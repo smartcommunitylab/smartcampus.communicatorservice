@@ -10,15 +10,17 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-
-import eu.trentorise.smartcampus.exceptions.*;
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
+import eu.trentorise.smartcampus.exceptions.AlreadyExistException;
+import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 
 
 @Service
 public class AppAccountManager {
 	private static final Logger logger = Logger
 			.getLogger(AppAccountManager.class);
+
+	private static final int FIRST = 0;
 
 	@Autowired
 	MongoTemplate db;
@@ -58,21 +60,19 @@ public class AppAccountManager {
 		db.remove(query, AppAccount.class);
 	}
 
-	public List<AppAccount> getAppAccounts(String appName) {
+	public List<AppAccount> getAppAccounts(String appId) {
 		Criteria crit = new Criteria();
-		crit.and("appName").is(appName);
+		crit.and("appId").is(appId);
 		Query query = Query.query(crit);
 		return db.find(query, AppAccount.class);
 	}
 	
-	public AppAccount getAppAccount(String appName) {
+	public AppAccount getAppAccount(String appId) {
 		Criteria crit = new Criteria();
-		crit.and("appName").is(appName);
+		crit.and("appId").is(appId);
 		Query query = Query.query(crit);
-		List x=db.find(query, AppAccount.class);
-		if(x.isEmpty())
-			return null;
-		return db.find(query, AppAccount.class).get(0);//todo
+		AppAccount x=db.find(query, AppAccount.class).get(FIRST);
+		return x;
 	}
 
 	public AppAccount getAppAccountById(String appAccountId)

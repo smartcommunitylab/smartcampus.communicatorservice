@@ -14,61 +14,58 @@
 
 	<description>Service manage notification</description>
 	<resource name="App" id="capp" />
+	<resource name="User" id="user" />
+	<resource name="Id" id="idn" />
+	<resource name="Conf" id="conf" />
 
-	</resource>
-	<resource name="User" id="user">
-	</resource>
-	<resource name="Id" id="idn">
-	</resource>
-	
 	<resourceMapping method="GET"
-		pathPattern="/eu.trentorise.smartcampus.communicator.model.Notification"
+		pathPattern="/notification"
 		uri="communicator.msg.read" />
 	<resourceMapping method="GET"
-		pathPattern="/eu.trentorise.smartcampus.communicator.model.Notification/{idn}"
+		pathPattern="/notification/{idn}"
 		uri="communicator.msg.read" />
 	<resourceMapping method="PUT"
-		pathPattern="/eu.trentorise.smartcampus.communicator.model.Notification/{idn}"
+		pathPattern="/notification/{idn}"
 		uri="communicator.msg.write" />
 	<resourceMapping method="DELETE"
-		pathPattern="/eu.trentorise.smartcampus.communicator.model.Notification/{idn}"
+		pathPattern="/notification/{idn}"
 		uri="communicator.msg.write" />
 	<resourceMapping method="GET"
-		pathPattern="/{capp}/eu.trentorise.smartcampus.communicator.model.Notification"
+		pathPattern="/{capp}/notification"
 		uri="communicator.app.msg.read.{capp}" />
 	<resourceMapping method="GET"
-		pathPattern="/{capp}/eu.trentorise.smartcampus.communicator.model.Notification/{idn}"
+		pathPattern="/{capp}/notification/{idn}"
 		uri="communicator.app.msg.read.{capp}" />
 	<resourceMapping method="PUT"
-		pathPattern="/{capp}/eu.trentorise.smartcampus.communicator.model.Notification/{idn}"
+		pathPattern="/{capp}/notification/{idn}"
 		uri="communicator.app.msg.write.{capp}" />
 	<resourceMapping method="DELETE"
-		pathPattern="/{capp}/eu.trentorise.smartcampus.communicator.model.Notification/{idn}"
+		pathPattern="/{capp}/notification/{idn}"
 		uri="communicator.app.msg.write.{capp}" />
 	<resourceMapping method="GET"
-		pathPattern="/user/eu.trentorise.smartcampus.communicator.model.Notification"
+		pathPattern="/user/notification"
 		uri="communicator.user.msg.read" />
 	<resourceMapping method="GET"
-		pathPattern="/user/eu.trentorise.smartcampus.communicator.model.Notification/{idn}"
+		pathPattern="/user/notification/{idn}"
 		uri="communicator.user.msg.read" />
 	<resourceMapping method="PUT"
-		pathPattern="/user/eu.trentorise.smartcampus.communicator.model.Notification/{idn}"
+		pathPattern="/user/notification/{idn}"
 		uri="communicator.user.msg.write" />
 	<resourceMapping method="DELETE"
-		pathPattern="/user/eu.trentorise.smartcampus.communicator.model.Notification/{idn}"
+		pathPattern="/user/notification/{idn}"
 		uri="communicator.user.msg.write" />
 	<resourceMapping method="POST" pathPattern="/send/user"
 		uri="communicator.send.user" />
 	<resourceMapping method="POST"
 		pathPattern="/send/app/{capp}" uri="communicator.send.app.{capp}" />
 	<resourceMapping method="GET"
-		pathPattern="/configuration/app/{capp}" uri="communicator.register.{capp}" />
+		pathPattern="/configuration/app/{capp}/{conf}" uri="communicator.register.{capp}" />
 	<resourceMapping method="POST"
 		pathPattern="/register/app/{capp}" uri="communicator.register.{capp}" />
 	<resourceMapping method="DELETE"
 		pathPattern="/unregister/app/{capp}" uri="communicator.register.{capp}" />
 	<resourceMapping method="GET"
-		pathPattern="/configuration/user/{capp}/{user}" uri="communicator.register.user.{capp}" />
+		pathPattern="/configuration/user/{capp}/{conf}" uri="communicator.register.user.{capp}" />
 	<resourceMapping method="DELETE"
 		pathPattern="/unregister/user/{capp}/{user}" uri="communicator.register.user.{capp}" />
 	<resourceMapping method="POST"
