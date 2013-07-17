@@ -213,7 +213,7 @@ public class AccountController extends SCController {
 
 	// TODO DELETE method instead of GET
 	// TODO client flow, userid required as input
-	@RequestMapping(method = RequestMethod.GET, value = "/unregister/user/{appId}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/user/{appId}")
 	public @ResponseBody
 	boolean unregisterUserToPush(HttpServletRequest request,
 			@PathVariable String appid,
@@ -240,7 +240,7 @@ public class AccountController extends SCController {
 
 	// TODO DELETE method instead of GET
 	// TODO client flow, userid required as input
-	@RequestMapping(method = RequestMethod.GET, value = "/unregister/app/{appId}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/app/{appId}")
 	public @ResponseBody
 	boolean unregisterAppToPush(HttpServletRequest request,
 			@PathVariable String appId, HttpSession session)
