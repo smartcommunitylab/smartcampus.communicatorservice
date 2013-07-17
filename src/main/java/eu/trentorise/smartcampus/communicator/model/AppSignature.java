@@ -9,20 +9,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AppSignature {
 	
-	private String appName;
+	private String appId;
 	
 	private String senderId;
 	
 	private String apiKey;
 
-	public String getAppName() {
-		return appName;
-	}
-
-	public void setAppName(String appName) {
-		this.appName = appName;
-	}
-
+	
 	public String getSenderId() {
 		return senderId;
 	}
@@ -37,6 +30,14 @@ public class AppSignature {
 
 	public void setApiKey(String apiKey) {
 		this.apiKey = apiKey;
+	}
+
+	public String getAppId() {
+		return appId;
+	}
+
+	public void setAppId(String appId) {
+		this.appId = appId;
 	}
 
 }

@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -34,6 +33,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
@@ -47,7 +47,6 @@ import eu.trentorise.smartcampus.communicator.model.UserSignature;
 import eu.trentorise.smartcampus.communicatorservice.manager.AppAccountManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.NotificationManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.UserAccountManager;
-import eu.trentorise.smartcampus.communicatorservice.manager.Utils;
 import eu.trentorise.smartcampus.exceptions.AlreadyExistException;
 import eu.trentorise.smartcampus.exceptions.SmartCampusException;
 import eu.trentorise.smartcampus.presentation.common.exception.DataException;
@@ -90,6 +89,9 @@ public class AccountController extends SCController {
 	protected AuthServices getAuthServices() {
 		return services;
 	}
+	
+	
+	
 
 	// TODO appName or id required
 	// TODO client flow
@@ -102,7 +104,7 @@ public class AccountController extends SCController {
 
 		String senderId = signature.getSenderId();
 		String apikey = signature.getApiKey();
-		String appName = signature.getAppName();
+		String appId = signature.getAppId();
 
 		List<Configuration> listConf = new ArrayList<Configuration>();
 
@@ -120,10 +122,10 @@ public class AccountController extends SCController {
 		
 
 		AppAccount appAccount;
-		List<AppAccount> listApp = appAccountManager.getAppAccounts(appName);
+		List<AppAccount> listApp = appAccountManager.getAppAccounts(appId);
 		if (listApp.isEmpty()) {
 			appAccount = new AppAccount();
-			appAccount.setAppName(appName);
+			appAccount.setAppId(appId);
 			appAccount.setConfigurations(listConf);
 			appAccountManager.save(appAccount);
 		} else {
@@ -263,22 +265,18 @@ public class AccountController extends SCController {
 	@RequestMapping(method = RequestMethod.POST, value = "/send/app/{appId}")
 	public @ResponseBody
 	void sendAppNotification(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session,
+			HttpServletResponse response, HttpSession session,@RequestParam(value="users", required=true) String[] userIds,
 			@RequestBody Notification notification,
 			@PathVariable("appId") String appId) throws DataException,
 			IOException, NotFoundException {
 
-		String usersParam = request.getParameter("users");
-		ObjectMapper mapper = new ObjectMapper();
-		@SuppressWarnings("unchecked")
-		List<String> users = mapper.readValue(usersParam, List.class);
 
 		NotificationAuthor author = new NotificationAuthor();
 		author.setAppId(appId);
 
 		notification.setType(appId);
 
-		for (String receiver : users) {
+		for (String receiver : userIds) {
 			notification.setId(null);
 			notification.setUser(receiver);
 			notificationManager.create(notification);
@@ -288,22 +286,18 @@ public class AccountController extends SCController {
 	@RequestMapping(method = RequestMethod.POST, value = "/send/user")
 	public @ResponseBody
 	void sendUserNotification(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session,
+			HttpServletResponse response, HttpSession session,@RequestParam(value="users", required=true) String[] userIds,
 			@RequestBody Notification notification) throws DataException,
 			IOException, NotFoundException {
 
-		String usersParam = request.getParameter("users");
-		ObjectMapper mapper = new ObjectMapper();
-		@SuppressWarnings("unchecked")
-		List<String> users = mapper.readValue(usersParam, List.class);
-
+	
 		String userId = getUserId();
 		NotificationAuthor author = new NotificationAuthor();
 		author.setUserId(userId);
 
 		notification.setType(userId);
 
-		for (String receiver : users) {
+		for (String receiver : userIds) {
 			notification.setId(null);
 			notification.setUser(receiver);
 			notificationManager.create(notification);
@@ -311,46 +305,51 @@ public class AccountController extends SCController {
 	}
 
 	// TODO client flow
-	@RequestMapping(method = RequestMethod.GET, value = "/configuration/app/{appid}/{conf}")
+	@RequestMapping(method = RequestMethod.GET, value = "/configuration/app/{appid}")
 	public @ResponseBody
 	Map<String, String> requestAppConfigurationToPush(
-			HttpServletRequest request, @PathVariable String appid, @PathVariable String conf,
+			HttpServletRequest request, @PathVariable String appid,
 			HttpSession session) throws DataException, IOException,
 			NotFoundException, SmartCampusException, AlreadyExistException {
 
-		
-		Configuration configuration=null;
+		Map<String, String> result=new HashMap<String, String>();
 		AppAccount index = appAccountManager.getAppAccount(appid);
 
 		
 			if (index != null && !index.getConfigurations().isEmpty()) {
-				configuration = index.getSpecificConfiguration(Utils.checkCloudToPushType(conf));				
+				for(Configuration x: index.getConfigurations()){
+					result.putAll(x.getListValue());
+				}				
 			}
 	
 
-		return configuration.getListValue();
+		return result;
 
 	}
 
 	// TODO client flow
-	@RequestMapping(method = RequestMethod.GET, value = "/configuration/user/{appid}/{conf}")
+	@RequestMapping(method = RequestMethod.GET, value = "/configuration/user/{appid}")
 	public @ResponseBody
 	Map<String, String> requestUserConfigurationToPush(
-			HttpServletRequest request, @PathVariable String appid,@PathVariable String conf,
+			HttpServletRequest request, @PathVariable String appid,
 			 HttpSession session)
 			throws DataException, IOException, NotFoundException,
 			SmartCampusException, AlreadyExistException {
 
-		Configuration configuration=null;
+		
+		Map<String, String> result=new HashMap<String, String>();
+		
 		String userid = getUserId();
 		List<UserAccount> list = userAccountManager.findByUserIdAndAppName(userid, appid);
 		for(UserAccount index : list){
 			if (index != null && !index.getConfigurations().isEmpty()) {
-				configuration = index.getSpecificConfiguration(Utils.checkCloudToPushType(conf));				
+				for(Configuration x: index.getConfigurations()){
+					result.putAll(x.getListValue());
+				}	
 			}
 	
 		}
-		return configuration.getListValue();
+		return result;
 
 	}
 

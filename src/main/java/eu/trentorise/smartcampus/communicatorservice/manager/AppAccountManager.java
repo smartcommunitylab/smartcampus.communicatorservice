@@ -27,8 +27,8 @@ public class AppAccountManager {
 
 	public AppAccount save(AppAccount appAccount) throws AlreadyExistException {
 
-		if (appAccount.getAppName() != null
-				&& db.findById(appAccount.getAppName(), AppAccount.class) != null) {
+		if (appAccount.getAppId() != null
+				&& db.findById(appAccount.getAppId(), AppAccount.class) != null) {
 			logger.error("AppAccount already stored, " + appAccount.getAppName());
 			throw new AlreadyExistException();
 		}
@@ -71,8 +71,11 @@ public class AppAccountManager {
 		Criteria crit = new Criteria();
 		crit.and("appId").is(appId);
 		Query query = Query.query(crit);
-		AppAccount x=db.find(query, AppAccount.class).get(FIRST);
-		return x;
+		List<AppAccount> x=db.find(query, AppAccount.class);
+				if(x.isEmpty())
+					return null;
+		
+		return x.get(FIRST);
 	}
 
 	public AppAccount getAppAccountById(String appAccountId)

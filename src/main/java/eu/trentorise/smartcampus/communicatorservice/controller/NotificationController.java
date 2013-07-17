@@ -82,6 +82,13 @@ public class NotificationController extends SCController {
 			@PathVariable("id") String id) throws DataException, IOException,
 			NotFoundException, SmartCampusException {
 
+		
+		
+		Notification x = new Notification();
+		x.setId("1");
+		x.setDescription("xx");
+		notificationManager.create(x);
+		
 		String userId = getUserId();
 		if (userId == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -128,7 +135,7 @@ public class NotificationController extends SCController {
 	//Notification by app
 	
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/{capp}/notification")
+	@RequestMapping(method = RequestMethod.GET, value = "/app/{capp}/notification")
 	public @ResponseBody
 	List<Notification> getNotificationsByApp(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
@@ -146,7 +153,7 @@ public class NotificationController extends SCController {
 		return notificationManager.get(null,capp, since, position, count, null);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/{capp}/notification/{id}")
+	@RequestMapping(method = RequestMethod.GET, value = "/app/{capp}/notification/{id}")
 	public @ResponseBody
 	Notification getNotificationByApp(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
@@ -162,7 +169,7 @@ public class NotificationController extends SCController {
 		return notificationManager.getByIdAndApp(id,capp);
 	}
 
-	@RequestMapping(method = RequestMethod.DELETE, value = "/{capp}/notification/{id}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/app/{capp}/notification/{id}")
 	public @ResponseBody
 	boolean deleteByApp(HttpServletRequest request, HttpServletResponse response,
 			HttpSession session, @PathVariable("id") String id,@PathVariable("capp") String capp)
@@ -179,7 +186,7 @@ public class NotificationController extends SCController {
 
 	
 
-	@RequestMapping(method = RequestMethod.PUT, value = "/{capp}/notification/{id}")
+	@RequestMapping(method = RequestMethod.PUT, value = "/app/{capp}/notification/{id}")
 	public @ResponseBody
 	void updateByApp(HttpServletRequest request, HttpServletResponse response,
 			HttpSession session, @PathVariable("id") String id,@PathVariable("capp") String capp,

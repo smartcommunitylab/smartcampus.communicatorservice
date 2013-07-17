@@ -25,6 +25,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import eu.trentorise.smartcampus.communicator.model.Notification;
 import eu.trentorise.smartcampus.presentation.common.exception.DataException;
+import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 import eu.trentorise.smartcampus.presentation.data.BasicObject;
 import eu.trentorise.smartcampus.presentation.storage.sync.mongo.BasicObjectSyncMongoStorage;
 import eu.trentorise.smartcampus.communicatorservice.filter.NotificationFilter;
@@ -136,14 +137,17 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 	}
 
 	public Notification getObjectByIdAndUser(String id, String userId,
-			Class<Notification> class1) {
+			Class<Notification> class1) throws NotFoundException {
 		Criteria criteria = new Criteria();
 		criteria.and("id").is(id);
 		if(userId!=null && userId.compareTo("")!=0){
 			criteria.and("author.userId").is(userId);
 		}
 		criteria.and("deleted").is(false);
-		return find(Query.query(criteria), Notification.class).get(FIRST);
+		List<Notification> x=find(Query.query(criteria), Notification.class);
+		if(x.isEmpty())
+			throw new NotFoundException();
+		return x.get(FIRST);
 	}
 
 }

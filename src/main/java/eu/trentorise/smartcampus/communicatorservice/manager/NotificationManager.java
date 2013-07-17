@@ -54,7 +54,7 @@ public class NotificationManager {
 		List<AppAccount> listApp = appAccountManager
 				.getAppAccounts(notification.getType());
 		// if app registered before it can send,otherwise doesn't send in push
-		if (!listApp.isEmpty()) {
+		if (!listApp.isEmpty() && false) {
 			// check the first appAccount
 			AppAccount appAccount = listApp.get(0);
 			// get the account could type
