@@ -49,6 +49,9 @@ public class NotificationManager {
 
 	public void create(Notification notification) throws 
 			NotFoundException, DataException {
+		if(notification.getAuthor()==null)
+			throw new DataException("No Author in this notification");
+		
 		storage.storeObject(notification);
 
 		List<AppAccount> listApp = appAccountManager
@@ -98,6 +101,11 @@ public class NotificationManager {
 		storage.deleteObject(storage.getObjectByIdAndUser(id, userId,Notification.class));
 		return true;
 	}
+	
+	public boolean deleteById(String id) throws NotFoundException, DataException {
+		storage.deleteObject(storage.getObjectById(id,Notification.class));
+		return true;
+	}
 
 	public List<Notification> get(String userId, String capp, Long since, Integer position,
 			Integer count, NotificationFilter filter) throws DataException {
@@ -137,6 +145,10 @@ public class NotificationManager {
 			throws NotFoundException, DataException {
 		changeStarredStatusByUser(id,userid, starredStatus);
 	}
+	public void starredById(String id, boolean starredStatus)
+			throws NotFoundException, DataException {
+		changeStarredStatusById(id, starredStatus);
+	}
 
 	/**
 	 * set starred value to true
@@ -169,10 +181,26 @@ public class NotificationManager {
 		notification.setStarred(starred);
 		storage.storeObject(notification);
 	}
+	
+	private void changeStarredStatusById(String id, boolean starred)
+			throws NotFoundException, DataException {
+		Notification notification = storage.getObjectById(id,
+				Notification.class);
+		notification.setStarred(starred);
+		storage.storeObject(notification);
+	}
 
 	public void updateLabelsByApp(String id,String capp, List<String> labelIds)
 			throws NotFoundException, DataException {
 		Notification notification = storage.getObjectByIdAndApp(id, capp,
+				Notification.class);
+		notification.setLabelIds(labelIds);
+		storage.storeObject(notification);
+	}
+	
+	public void updateLabelsById(String id, List<String> labelIds)
+			throws NotFoundException, DataException {
+		Notification notification = storage.getObjectById(id,
 				Notification.class);
 		notification.setLabelIds(labelIds);
 		storage.storeObject(notification);

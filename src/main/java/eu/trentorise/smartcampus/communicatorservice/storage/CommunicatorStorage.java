@@ -85,12 +85,15 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 			String capp, Long since, NotificationFilter filter) {
 		Criteria criteria = new Criteria();
 		// user is obligatory
-		criteria.and("user").is(user);
+		//criteria.and("user").is(user);
 		// only non-deleted
 		criteria.and("deleted").is(false);
 
 		if(capp!=null && capp.compareTo("")!=0){
-			criteria.and("author.appId").is(capp);
+			criteria.and("content.author.appId").is(capp);
+		}
+		if(user!=null && user.compareTo("")!=0){
+			criteria.and("content.author.userId").is(user);
 		}
 		if (since != null) {
 			criteria.and("content.timestamp").gte(since);
@@ -125,15 +128,18 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 	};
 
 	public Notification getObjectByIdAndApp(String id, String capp,
-			Class<Notification> class1) {
+			Class<Notification> class1) throws NotFoundException {
 
 		Criteria criteria = new Criteria();
 		criteria.and("id").is(id);
 		if(capp!=null && capp.compareTo("")!=0){
-			criteria.and("author.appId").is(capp);
+			criteria.and("content.author.appId").is(capp);
 		}
 		criteria.and("deleted").is(false);
-		return find(Query.query(criteria), Notification.class).get(FIRST);
+		List<Notification> x=find(Query.query(criteria), Notification.class);
+		if(x.isEmpty())
+			throw new NotFoundException();
+		return x.get(FIRST);
 	}
 
 	public Notification getObjectByIdAndUser(String id, String userId,
@@ -141,7 +147,7 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 		Criteria criteria = new Criteria();
 		criteria.and("id").is(id);
 		if(userId!=null && userId.compareTo("")!=0){
-			criteria.and("author.userId").is(userId);
+			criteria.and("content.author.userId").is(userId);
 		}
 		criteria.and("deleted").is(false);
 		List<Notification> x=find(Query.query(criteria), Notification.class);

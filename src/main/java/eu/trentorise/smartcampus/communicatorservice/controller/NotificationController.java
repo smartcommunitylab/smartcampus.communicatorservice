@@ -81,14 +81,8 @@ public class NotificationController extends SCController {
 			HttpServletResponse response, HttpSession session,
 			@PathVariable("id") String id) throws DataException, IOException,
 			NotFoundException, SmartCampusException {
-
-		
-		
-		Notification x = new Notification();
-		x.setId("1");
-		x.setDescription("xx");
-		notificationManager.create(x);
-		
+	
+	
 		String userId = getUserId();
 		if (userId == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -110,7 +104,7 @@ public class NotificationController extends SCController {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 
-		return notificationManager.deleteByUser(id,userId);
+		return notificationManager.deleteById(id);
 	}
 
 	
@@ -123,12 +117,12 @@ public class NotificationController extends SCController {
 			IOException, NotFoundException, SmartCampusException {
 
 		String userId = getUserId();
-		if (userId == null) {
+		if (userId == null ) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 
-		notificationManager.updateLabelsByUser(id,userId, notification.getLabelIds());
-		notificationManager.starredByUser(id,userId, notification.isStarred());
+		notificationManager.updateLabelsById(id, notification.getLabelIds());
+		notificationManager.starredById(id, notification.isStarred());
 	}
 	
 	

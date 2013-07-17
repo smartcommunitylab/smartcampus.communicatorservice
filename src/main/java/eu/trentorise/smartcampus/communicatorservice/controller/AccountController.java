@@ -197,6 +197,9 @@ public class AccountController extends SCController {
 		not.setType(appName);
 		not.setUser(String.valueOf(userAccount.getUserId()));
 		not.setId(null);
+		NotificationAuthor notAuth=new NotificationAuthor();
+		notAuth.setAppId(appid);
+		not.setAuthor(notAuth);
 
 		try {
 			notificationManager.create(not);
@@ -210,10 +213,10 @@ public class AccountController extends SCController {
 
 	// TODO DELETE method instead of GET
 	// TODO client flow, userid required as input
-	@RequestMapping(method = RequestMethod.GET, value = "/unregister/user/{appId}/{userid}")
+	@RequestMapping(method = RequestMethod.GET, value = "/unregister/user/{appId}")
 	public @ResponseBody
 	boolean unregisterUserToPush(HttpServletRequest request,
-			@PathVariable String appid, @PathVariable String userid,
+			@PathVariable String appid,
 			HttpSession session) throws DataException, IOException,
 			NotFoundException, SmartCampusException, AlreadyExistException {
 
