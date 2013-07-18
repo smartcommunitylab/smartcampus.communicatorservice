@@ -24,11 +24,11 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import eu.trentorise.smartcampus.communicator.model.Notification;
+import eu.trentorise.smartcampus.communicatorservice.filter.NotificationFilter;
 import eu.trentorise.smartcampus.presentation.common.exception.DataException;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 import eu.trentorise.smartcampus.presentation.data.BasicObject;
 import eu.trentorise.smartcampus.presentation.storage.sync.mongo.BasicObjectSyncMongoStorage;
-import eu.trentorise.smartcampus.communicatorservice.filter.NotificationFilter;
 
 public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 
@@ -52,13 +52,14 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 						.is(cls.getCanonicalName())), getObjectClass());
 	}
 
-	public List<Notification> searchNotifications(String user, String capp, Long since,
-			Integer position, Integer count, NotificationFilter infilter) {
+	public List<Notification> searchNotifications(String user, String capp,
+			Long since, Integer position, Integer count,
+			NotificationFilter infilter) {
 		NotificationFilter filter = infilter == null ? new NotificationFilter()
 				: infilter;
 		List<Notification> list = find(
-				Query.query(createNotificationSearchWithTypeCriteria(user,capp,
-						since, filter)), Notification.class);
+				Query.query(createNotificationSearchWithTypeCriteria(user,
+						capp, since, filter)), Notification.class);
 		if (filter.getOrdering() != null) {
 			switch (filter.getOrdering()) {
 			case ORDER_BY_ARRIVAL:
@@ -85,14 +86,14 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 			String capp, Long since, NotificationFilter filter) {
 		Criteria criteria = new Criteria();
 		// user is obligatory
-		//criteria.and("user").is(user);
+		// criteria.and("user").is(user);
 		// only non-deleted
 		criteria.and("deleted").is(false);
 
-		if(capp!=null && capp.compareTo("")!=0){
+		if (capp != null && capp.compareTo("") != 0) {
 			criteria.and("content.author.appId").is(capp);
 		}
-		if(user!=null && user.compareTo("")!=0){
+		if (user != null && user.compareTo("") != 0) {
 			criteria.and("content.author.userId").is(user);
 		}
 		if (since != null) {
@@ -132,12 +133,12 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 
 		Criteria criteria = new Criteria();
 		criteria.and("id").is(id);
-		if(capp!=null && capp.compareTo("")!=0){
+		if (capp != null && capp.compareTo("") != 0) {
 			criteria.and("content.author.appId").is(capp);
 		}
 		criteria.and("deleted").is(false);
-		List<Notification> x=find(Query.query(criteria), Notification.class);
-		if(x.isEmpty())
+		List<Notification> x = find(Query.query(criteria), Notification.class);
+		if (x.isEmpty())
 			throw new NotFoundException();
 		return x.get(FIRST);
 	}
@@ -146,12 +147,12 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 			Class<Notification> class1) throws NotFoundException {
 		Criteria criteria = new Criteria();
 		criteria.and("id").is(id);
-		if(userId!=null && userId.compareTo("")!=0){
+		if (userId != null && userId.compareTo("") != 0) {
 			criteria.and("content.author.userId").is(userId);
 		}
 		criteria.and("deleted").is(false);
-		List<Notification> x=find(Query.query(criteria), Notification.class);
-		if(x.isEmpty())
+		List<Notification> x = find(Query.query(criteria), Notification.class);
+		if (x.isEmpty())
 			throw new NotFoundException();
 		return x.get(FIRST);
 	}

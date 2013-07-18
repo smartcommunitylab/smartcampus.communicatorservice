@@ -89,9 +89,6 @@ public class AccountController extends SCController {
 	protected AuthServices getAuthServices() {
 		return services;
 	}
-	
-	
-	
 
 	// TODO appName or id required
 	// TODO client flow
@@ -119,7 +116,6 @@ public class AccountController extends SCController {
 
 		Configuration e = new Configuration(CloudToPushType.GOOGLE, listvalue);
 		listConf.add(e);
-		
 
 		AppAccount appAccount;
 		List<AppAccount> listApp = appAccountManager.getAppAccounts(appId);
@@ -180,13 +176,12 @@ public class AccountController extends SCController {
 		// if user is not registered?use ours?
 
 		// ask type of device
-		
+
 		Map<String, String> listvalue = new HashMap<String, String>();
 		listvalue.put(gcm_registration_id_default_key, registrationId);
-		
 
 		Configuration e = new Configuration(CloudToPushType.GOOGLE, listvalue);
-		listConf.add(e);	
+		listConf.add(e);
 
 		userAccount.setConfigurations(listConf);
 		userAccountManager.update(userAccount);
@@ -197,7 +192,7 @@ public class AccountController extends SCController {
 		not.setType(appName);
 		not.setUser(String.valueOf(userAccount.getUserId()));
 		not.setId(null);
-		NotificationAuthor notAuth=new NotificationAuthor();
+		NotificationAuthor notAuth = new NotificationAuthor();
 		notAuth.setAppId(appid);
 		not.setAuthor(notAuth);
 
@@ -216,9 +211,9 @@ public class AccountController extends SCController {
 	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/user/{appId}")
 	public @ResponseBody
 	boolean unregisterUserToPush(HttpServletRequest request,
-			@PathVariable String appid,
-			HttpSession session) throws DataException, IOException,
-			NotFoundException, SmartCampusException, AlreadyExistException {
+			@PathVariable String appid, HttpSession session)
+			throws DataException, IOException, NotFoundException,
+			SmartCampusException, AlreadyExistException {
 
 		String userId = getUserId();
 		UserAccount userAccount;
@@ -268,11 +263,11 @@ public class AccountController extends SCController {
 	@RequestMapping(method = RequestMethod.POST, value = "/send/app/{appId}")
 	public @ResponseBody
 	void sendAppNotification(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session,@RequestParam(value="users", required=true) String[] userIds,
+			HttpServletResponse response, HttpSession session,
+			@RequestParam(value = "users", required = true) String[] userIds,
 			@RequestBody Notification notification,
 			@PathVariable("appId") String appId) throws DataException,
 			IOException, NotFoundException {
-
 
 		NotificationAuthor author = new NotificationAuthor();
 		author.setAppId(appId);
@@ -289,11 +284,11 @@ public class AccountController extends SCController {
 	@RequestMapping(method = RequestMethod.POST, value = "/send/user")
 	public @ResponseBody
 	void sendUserNotification(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session,@RequestParam(value="users", required=true) String[] userIds,
+			HttpServletResponse response, HttpSession session,
+			@RequestParam(value = "users", required = true) String[] userIds,
 			@RequestBody Notification notification) throws DataException,
 			IOException, NotFoundException {
 
-	
 		String userId = getUserId();
 		NotificationAuthor author = new NotificationAuthor();
 		author.setUserId(userId);
@@ -315,16 +310,14 @@ public class AccountController extends SCController {
 			HttpSession session) throws DataException, IOException,
 			NotFoundException, SmartCampusException, AlreadyExistException {
 
-		Map<String, String> result=new HashMap<String, String>();
+		Map<String, String> result = new HashMap<String, String>();
 		AppAccount index = appAccountManager.getAppAccount(appid);
 
-		
-			if (index != null && !index.getConfigurations().isEmpty()) {
-				for(Configuration x: index.getConfigurations()){
-					result.putAll(x.getListValue());
-				}				
+		if (index != null && !index.getConfigurations().isEmpty()) {
+			for (Configuration x : index.getConfigurations()) {
+				result.putAll(x.getListValue());
 			}
-	
+		}
 
 		return result;
 
@@ -335,22 +328,21 @@ public class AccountController extends SCController {
 	public @ResponseBody
 	Map<String, String> requestUserConfigurationToPush(
 			HttpServletRequest request, @PathVariable String appid,
-			 HttpSession session)
-			throws DataException, IOException, NotFoundException,
-			SmartCampusException, AlreadyExistException {
+			HttpSession session) throws DataException, IOException,
+			NotFoundException, SmartCampusException, AlreadyExistException {
 
-		
-		Map<String, String> result=new HashMap<String, String>();
-		
+		Map<String, String> result = new HashMap<String, String>();
+
 		String userid = getUserId();
-		List<UserAccount> list = userAccountManager.findByUserIdAndAppName(userid, appid);
-		for(UserAccount index : list){
+		List<UserAccount> list = userAccountManager.findByUserIdAndAppName(
+				userid, appid);
+		for (UserAccount index : list) {
 			if (index != null && !index.getConfigurations().isEmpty()) {
-				for(Configuration x: index.getConfigurations()){
+				for (Configuration x : index.getConfigurations()) {
 					result.putAll(x.getListValue());
-				}	
+				}
 			}
-	
+
 		}
 		return result;
 

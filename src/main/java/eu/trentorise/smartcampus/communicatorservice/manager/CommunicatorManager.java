@@ -28,7 +28,7 @@ public class CommunicatorManager {
 
 	@Autowired
 	CommunicatorStorage storage;
-	
+
 	public void deleteUser(User user) throws DataException {
 		storage.deleteObjectsPermanently(Notification.class, Utils.userId(user));
 	}

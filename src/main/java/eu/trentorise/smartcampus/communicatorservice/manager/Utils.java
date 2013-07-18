@@ -22,23 +22,23 @@ import eu.trentorise.smartcampus.ac.provider.model.User;
 import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
 
 public class Utils {
-	
+
 	@Autowired
 	@Value("${gcm.sender.id}")
 	public static String gcm_sender_id;
 
 	public static String userId(User user) {
-		return user.getId()+"";
+		return user.getId() + "";
 	}
 
 	public static CloudToPushType checkCloudToPushType(String conf) {
-		String result=conf.toUpperCase();
-		for(CloudToPushType x : CloudToPushType.values()){
-			if(x.name().compareTo(result)==0){
+		String result = conf.toUpperCase();
+		for (CloudToPushType x : CloudToPushType.values()) {
+			if (x.name().compareTo(result) == 0) {
 				return x;
 			}
 		}
 		return CloudToPushType.GOOGLE;
-	} 
+	}
 
 }

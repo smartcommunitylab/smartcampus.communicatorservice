@@ -26,10 +26,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import eu.trentorise.smartcampus.exceptions.*;
-import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 import eu.trentorise.smartcampus.communicator.model.Configuration;
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
+import eu.trentorise.smartcampus.exceptions.AlreadyExistException;
+import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 
 /**
  * <i>UserAccountManager</i> manages functionalities about the user storage
@@ -110,23 +110,22 @@ public class UserAccountManager {
 		criteria.and("userId").is(userid);
 		return db.find(Query.query(criteria), UserAccount.class);
 	}
-	
+
 	/**
 	 * retrieves all the {@link UserAccount} of a given user
 	 * 
 	 * @param uid
 	 *            id of the owner of user storage accounts
 	 * @param appName
-	 *           
+	 * 
 	 * @return a list of UserAccount of the given user id and appName
 	 */
-	public List<UserAccount> findByUserIdAndAppName(String userid,String appId) {
+	public List<UserAccount> findByUserIdAndAppName(String userid, String appId) {
 		Criteria criteria = new Criteria();
 		criteria.and("userId").is(userid);
 		criteria.and("appId").is(appId);
 		return db.find(Query.query(criteria), UserAccount.class);
 	}
-
 
 	/**
 	 * retrieves the {@link UserAccount} of given id
@@ -145,8 +144,6 @@ public class UserAccountManager {
 		}
 		return account;
 	}
-
-	
 
 	/**
 	 * deletes a {@link UserAccount}

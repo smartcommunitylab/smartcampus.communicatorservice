@@ -14,7 +14,6 @@ import eu.trentorise.smartcampus.communicator.model.AppAccount;
 import eu.trentorise.smartcampus.exceptions.AlreadyExistException;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 
-
 @Service
 public class AppAccountManager {
 	private static final Logger logger = Logger
@@ -29,7 +28,8 @@ public class AppAccountManager {
 
 		if (appAccount.getAppId() != null
 				&& db.findById(appAccount.getAppId(), AppAccount.class) != null) {
-			logger.error("AppAccount already stored, " + appAccount.getAppName());
+			logger.error("AppAccount already stored, "
+					+ appAccount.getAppName());
 			throw new AlreadyExistException();
 		}
 		if (appAccount.getId() == null
@@ -66,15 +66,15 @@ public class AppAccountManager {
 		Query query = Query.query(crit);
 		return db.find(query, AppAccount.class);
 	}
-	
+
 	public AppAccount getAppAccount(String appId) {
 		Criteria crit = new Criteria();
 		crit.and("appId").is(appId);
 		Query query = Query.query(crit);
-		List<AppAccount> x=db.find(query, AppAccount.class);
-				if(x.isEmpty())
-					return null;
-		
+		List<AppAccount> x = db.find(query, AppAccount.class);
+		if (x.isEmpty())
+			return null;
+
 		return x.get(FIRST);
 	}
 

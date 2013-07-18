@@ -1,5 +1,17 @@
 /*******************************************************************************
- * Copyright 2012-2013 Trento RISE
+  <dependency>
+        <groupId>com.googlecode.json-simple</groupId>
+        <artifactId>json-simple</artifactId>
+        <version>1.1</version>
+      </dependency>  <dependency>
+        <groupId>com.googlecode.json-simple</groupId>
+        <artifactId>json-simple</artifactId>
+        <version>1.1</version>
+      </dependency>  <dependency>
+        <groupId>com.googlecode.json-simple</groupId>
+        <artifactId>json-simple</artifactId>
+        <version>1.1</version>
+      </dependency>* Copyright 2012-2013 Trento RISE
  * 
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -48,10 +60,10 @@ public class NotificationController extends SCController {
 
 	@Autowired
 	PermissionManager permissionManager;
-	
+
 	@Autowired
 	private AuthServices services;
-	
+
 	@Override
 	protected AuthServices getAuthServices() {
 		return services;
@@ -72,7 +84,8 @@ public class NotificationController extends SCController {
 			return null;
 		}
 
-		return notificationManager.get(userId,null, since, position, count, null);
+		return notificationManager.get(userId, null, since, position, count,
+				null);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/notification/{id}")
@@ -81,8 +94,7 @@ public class NotificationController extends SCController {
 			HttpServletResponse response, HttpSession session,
 			@PathVariable("id") String id) throws DataException, IOException,
 			NotFoundException, SmartCampusException {
-	
-	
+
 		String userId = getUserId();
 		if (userId == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -107,8 +119,6 @@ public class NotificationController extends SCController {
 		return notificationManager.deleteById(id);
 	}
 
-	
-
 	@RequestMapping(method = RequestMethod.PUT, value = "/notification/{id}")
 	public @ResponseBody
 	void update(HttpServletRequest request, HttpServletResponse response,
@@ -117,56 +127,56 @@ public class NotificationController extends SCController {
 			IOException, NotFoundException, SmartCampusException {
 
 		String userId = getUserId();
-		if (userId == null ) {
+		if (userId == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 
 		notificationManager.updateLabelsById(id, notification.getLabelIds());
 		notificationManager.starredById(id, notification.isStarred());
 	}
-	
-	
-	//Notification by app
-	
-	
+
+	// Notification by app
+
 	@RequestMapping(method = RequestMethod.GET, value = "/app/{capp}/notification")
 	public @ResponseBody
 	List<Notification> getNotificationsByApp(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
 			@RequestParam("since") Long since,
 			@RequestParam("position") Integer position,
-			@RequestParam("count") Integer count,@PathVariable("capp") String capp) throws DataException,
+			@RequestParam("count") Integer count,
+			@PathVariable("capp") String capp) throws DataException,
 			IOException, SmartCampusException {
 
-		
 		if (capp == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
 
-		return notificationManager.get(null,capp, since, position, count, null);
+		return notificationManager
+				.get(null, capp, since, position, count, null);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/app/{capp}/notification/{id}")
 	public @ResponseBody
 	Notification getNotificationByApp(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
-			@PathVariable("id") String id,@PathVariable("capp") String capp) throws DataException, IOException,
-			NotFoundException, SmartCampusException {
+			@PathVariable("id") String id, @PathVariable("capp") String capp)
+			throws DataException, IOException, NotFoundException,
+			SmartCampusException {
 
-		
 		if (capp == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
 
-		return notificationManager.getByIdAndApp(id,capp);
+		return notificationManager.getByIdAndApp(id, capp);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "/app/{capp}/notification/{id}")
 	public @ResponseBody
-	boolean deleteByApp(HttpServletRequest request, HttpServletResponse response,
-			HttpSession session, @PathVariable("id") String id,@PathVariable("capp") String capp)
+	boolean deleteByApp(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session,
+			@PathVariable("id") String id, @PathVariable("capp") String capp)
 			throws DataException, IOException, NotFoundException,
 			SmartCampusException {
 
@@ -175,15 +185,14 @@ public class NotificationController extends SCController {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 
-		return notificationManager.deleteByApp(id,capp);
+		return notificationManager.deleteByApp(id, capp);
 	}
-
-	
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/app/{capp}/notification/{id}")
 	public @ResponseBody
 	void updateByApp(HttpServletRequest request, HttpServletResponse response,
-			HttpSession session, @PathVariable("id") String id,@PathVariable("capp") String capp,
+			HttpSession session, @PathVariable("id") String id,
+			@PathVariable("capp") String capp,
 			@RequestBody Notification notification) throws DataException,
 			IOException, NotFoundException, SmartCampusException {
 
@@ -192,17 +201,13 @@ public class NotificationController extends SCController {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 
-		notificationManager.updateLabelsByApp(id,capp, notification.getLabelIds());
-		notificationManager.starredByApp(id,capp, notification.isStarred());
+		notificationManager.updateLabelsByApp(id, capp,
+				notification.getLabelIds());
+		notificationManager.starredByApp(id, capp, notification.isStarred());
 	}
-	
-	
-	
-	
-	
-	//notification by user
-	
-	
+
+	// notification by user
+
 	@RequestMapping(method = RequestMethod.GET, value = "/user/notification")
 	public @ResponseBody
 	List<Notification> getNotificationsByUser(HttpServletRequest request,
@@ -218,7 +223,8 @@ public class NotificationController extends SCController {
 			return null;
 		}
 
-		return notificationManager.get(userId,null, since, position, count, null);
+		return notificationManager.get(userId, null, since, position, count,
+				null);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/user/notification/{id}")
@@ -234,25 +240,23 @@ public class NotificationController extends SCController {
 			return null;
 		}
 
-		return notificationManager.getByIdAndUser(id,userId);
+		return notificationManager.getByIdAndUser(id, userId);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "user/notification/{id}")
 	public @ResponseBody
-	boolean deleteByUser(HttpServletRequest request, HttpServletResponse response,
-			HttpSession session, @PathVariable("id") String id)
-			throws DataException, IOException, NotFoundException,
-			SmartCampusException {
+	boolean deleteByUser(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session,
+			@PathVariable("id") String id) throws DataException, IOException,
+			NotFoundException, SmartCampusException {
 
 		String userId = getUserId();
 		if (userId == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 
-		return notificationManager.deleteByUser(id,userId);
+		return notificationManager.deleteByUser(id, userId);
 	}
-
-	
 
 	@RequestMapping(method = RequestMethod.PUT, value = "user/notification/{id}")
 	public @ResponseBody
@@ -266,58 +270,9 @@ public class NotificationController extends SCController {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 
-		notificationManager.updateLabelsByUser(id,userId, notification.getLabelIds());
-		notificationManager.starredByUser(id,userId, notification.isStarred());
+		notificationManager.updateLabelsByUser(id, userId,
+				notification.getLabelIds());
+		notificationManager.starredByUser(id, userId, notification.isStarred());
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-	
 }

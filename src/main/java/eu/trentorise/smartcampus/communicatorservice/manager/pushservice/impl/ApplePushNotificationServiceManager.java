@@ -6,8 +6,6 @@ import eu.trentorise.smartcampus.communicator.model.Notification;
 import eu.trentorise.smartcampus.communicatorservice.manager.pushservice.PushServiceCloud;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 
-
-
 @Component
 public class ApplePushNotificationServiceManager implements PushServiceCloud {
 

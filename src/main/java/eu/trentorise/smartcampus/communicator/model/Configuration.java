@@ -49,8 +49,9 @@ public class Configuration {
 	public Configuration() {
 
 	}
-	
-	public Configuration(CloudToPushType key, Map<String, String> listValue) throws JsonGenerationException, JsonMappingException, IOException {
+
+	public Configuration(CloudToPushType key, Map<String, String> listValue)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		this.setKey(key);
 		this.setListValue(listValue);
 	}
@@ -62,11 +63,12 @@ public class Configuration {
 	public void setKey(CloudToPushType key) {
 		this.key = key;
 	}
-	
-	public void setListValue(Map<String, String> listValue) throws JsonGenerationException, JsonMappingException, IOException {
+
+	public void setListValue(Map<String, String> listValue)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		this.listValue = mapper.writeValueAsString(listValue);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Map<String, String> getListValue() {
 		try {

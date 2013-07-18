@@ -83,6 +83,7 @@ public class UserAccount {
 	public void setAppId(String appId) {
 		this.appId = appId;
 	}
+
 	public List<CloudToPushType> getCloudToPushTypeConfigured() {
 		List<Configuration> list = getConfigurations();
 		List<CloudToPushType> result = new ArrayList<CloudToPushType>();
@@ -102,6 +103,5 @@ public class UserAccount {
 		}
 		return result;
 	}
-	
 
 }

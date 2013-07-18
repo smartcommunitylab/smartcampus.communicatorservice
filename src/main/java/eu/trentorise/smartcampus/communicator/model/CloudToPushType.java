@@ -23,5 +23,5 @@ package eu.trentorise.smartcampus.communicator.model;
  * 
  */
 public enum CloudToPushType {
-	APPLE, GOOGLE,WINDOWSPHONE
+	APPLE, GOOGLE, WINDOWSPHONE
 }
