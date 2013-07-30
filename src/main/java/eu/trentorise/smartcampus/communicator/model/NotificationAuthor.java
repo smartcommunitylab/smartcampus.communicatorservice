@@ -22,15 +22,6 @@ public class NotificationAuthor implements Serializable {
 
 	private String appId;
 	private String userId;
-	private String name;
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public String getUserId() {
 		return userId;

@@ -44,9 +44,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.trentorise.smartcampus.communicator.model.Notification;
+import eu.trentorise.smartcampus.communicatorservice.exceptions.SmartCampusException;
 import eu.trentorise.smartcampus.communicatorservice.manager.NotificationManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.PermissionManager;
-import eu.trentorise.smartcampus.exceptions.SmartCampusException;
 import eu.trentorise.smartcampus.presentation.common.exception.DataException;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 import eu.trentorise.smartcampus.resourceprovider.controller.SCController;

@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
-import eu.trentorise.smartcampus.exceptions.AlreadyExistException;
+import eu.trentorise.smartcampus.communicatorservice.exceptions.AlreadyExistException;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 
 @Service

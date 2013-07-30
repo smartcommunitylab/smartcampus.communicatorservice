@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 
 import eu.trentorise.smartcampus.communicator.model.Configuration;
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
-import eu.trentorise.smartcampus.exceptions.AlreadyExistException;
+import eu.trentorise.smartcampus.communicatorservice.exceptions.AlreadyExistException;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 
 /**
