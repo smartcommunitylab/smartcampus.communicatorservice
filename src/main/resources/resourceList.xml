@@ -72,7 +72,6 @@
 		pathPattern="/register/user/{capp}" uri="communicator.register.user.{capp}" />
 
 
-
 </service>
 
 

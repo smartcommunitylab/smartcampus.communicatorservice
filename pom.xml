@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>eu.trentorise.smartcampus</groupId>
 		<artifactId>vas-web-conf</artifactId>
-		<version>1.4</version>
+		<version>1.5</version>
 	</parent>
 
 	<properties>
@@ -26,6 +26,12 @@
 			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-test</artifactId>
+  <version>2.5</version>
+</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -68,6 +74,12 @@
 			<artifactId>spring-test</artifactId>
 			<version>2.5</version>
 		</dependency>
+		
+		  <dependency>
+            <groupId>eu.trentorise.smartcampus</groupId>
+            <artifactId>smartcampus.socialservice.model</artifactId>
+            <version>1.1</version>
+        </dependency>
 
 
 		<dependency>

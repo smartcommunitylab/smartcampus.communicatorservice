@@ -13,23 +13,28 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  ******************************************************************************/
-package eu.trentorise.smartcampus.communicatorservice.manager;
+package eu.trentorise.smartcampus.communicator.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import java.util.List;
 
-import eu.trentorise.smartcampus.communicator.model.Notification;
-import eu.trentorise.smartcampus.communicatorservice.storage.CommunicatorStorage;
-import eu.trentorise.smartcampus.presentation.common.exception.DataException;
-import eu.trentorise.smartcampus.social.model.User;
+/**
+ * Class representing a notification
+ */
+public class Notifications {
 
-@Component
-public class CommunicatorManager {
+	/**
+	 * A list of basic profiles
+	 */
+	private List<Notification> notifications;
 
-	@Autowired
-	CommunicatorStorage storage;
-
-	public void deleteUser(User user) throws DataException {
-		storage.deleteObjectsPermanently(Notification.class, Utils.userId(user));
+	public List<Notification> getNotifications() {
+		return notifications;
 	}
+
+	public void setNotifications(List<Notification> notifications) {
+		this.notifications = notifications;
+	}
+
+	
+	
 }

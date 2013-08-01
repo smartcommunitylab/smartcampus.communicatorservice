@@ -197,7 +197,7 @@ public class AccountController extends SCController {
 		not.setAuthor(notAuth);
 
 		try {
-			notificationManager.create(not);
+			notificationManager.create(not,false);
 		} catch (NotFoundException e1) {
 			e1.printStackTrace();
 		}
@@ -242,17 +242,17 @@ public class AccountController extends SCController {
 			throws DataException, IOException, NotFoundException,
 			SmartCampusException, AlreadyExistException {
 
-		String userId = getUserId();
-		UserAccount userAccount;
+		
+		
 
-		List<UserAccount> listUser = userAccountManager.findByUserIdAndAppName(
-				userId, appId);
+		AppAccount listUser = appAccountManager.getAppAccount(appId);
+				
 
-		if (!listUser.isEmpty()) {
-			userAccount = listUser.get(0);
+		if (listUser!=null) {
+			
 
-			userAccount.setConfigurations(null);
-			userAccountManager.update(userAccount);
+			listUser.setConfigurations(null);
+			appAccountManager.update(listUser);
 
 		}
 
@@ -277,7 +277,7 @@ public class AccountController extends SCController {
 		for (String receiver : userIds) {
 			notification.setId(null);
 			notification.setUser(receiver);
-			notificationManager.create(notification);
+			notificationManager.create(notification,false);
 		}
 	}
 
@@ -298,7 +298,7 @@ public class AccountController extends SCController {
 		for (String receiver : userIds) {
 			notification.setId(null);
 			notification.setUser(receiver);
-			notificationManager.create(notification);
+			notificationManager.create(notification,false);
 		}
 	}
 

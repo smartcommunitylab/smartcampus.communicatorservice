@@ -91,10 +91,10 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 		criteria.and("deleted").is(false);
 
 		if (capp != null && capp.compareTo("") != 0) {
-			criteria.and("content.author.appId").is(capp);
+			criteria.and("content.type").is(capp);
 		}
 		if (user != null && user.compareTo("") != 0) {
-			criteria.and("content.author.userId").is(user);
+			criteria.and("content.user").is(user);
 		}
 		if (since != null) {
 			criteria.and("content.timestamp").gte(since);
@@ -134,7 +134,7 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 		Criteria criteria = new Criteria();
 		criteria.and("id").is(id);
 		if (capp != null && capp.compareTo("") != 0) {
-			criteria.and("content.author.appId").is(capp);
+			criteria.and("content.type").is(capp);
 		}
 		criteria.and("deleted").is(false);
 		List<Notification> x = find(Query.query(criteria), Notification.class);
@@ -148,7 +148,7 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 		Criteria criteria = new Criteria();
 		criteria.and("id").is(id);
 		if (userId != null && userId.compareTo("") != 0) {
-			criteria.and("content.author.userId").is(userId);
+			criteria.and("content.user").is(userId);
 		}
 		criteria.and("deleted").is(false);
 		List<Notification> x = find(Query.query(criteria), Notification.class);

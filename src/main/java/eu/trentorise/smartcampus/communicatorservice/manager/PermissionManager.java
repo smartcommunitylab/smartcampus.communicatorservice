@@ -19,9 +19,10 @@ package eu.trentorise.smartcampus.communicatorservice.manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.trentorise.smartcampus.ac.provider.model.User;
+
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
+import eu.trentorise.smartcampus.social.model.User;
 
 /**
  * <i>PermissionManager</i> checks the permissions about resources and storage

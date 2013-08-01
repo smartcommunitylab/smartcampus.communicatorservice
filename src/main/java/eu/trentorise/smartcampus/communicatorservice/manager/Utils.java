@@ -18,8 +18,9 @@ package eu.trentorise.smartcampus.communicatorservice.manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import eu.trentorise.smartcampus.ac.provider.model.User;
+
 import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
+import eu.trentorise.smartcampus.social.model.User;
 
 public class Utils {
 

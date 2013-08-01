@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.trentorise.smartcampus.communicator.model.Notification;
+import eu.trentorise.smartcampus.communicator.model.Notifications;
 import eu.trentorise.smartcampus.communicatorservice.exceptions.SmartCampusException;
 import eu.trentorise.smartcampus.communicatorservice.manager.NotificationManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.PermissionManager;
@@ -71,7 +72,7 @@ public class NotificationController extends SCController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/notification")
 	public @ResponseBody
-	List<Notification> getNotifications(HttpServletRequest request,
+	Notifications getNotifications(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
 			@RequestParam("since") Long since,
 			@RequestParam("position") Integer position,
@@ -83,9 +84,11 @@ public class NotificationController extends SCController {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
+		Notifications result=new Notifications();
+		result.setNotifications(notificationManager.get(userId, null, since, position, count,
+				null));
 
-		return notificationManager.get(userId, null, since, position, count,
-				null);
+		return result;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/notification/{id}")
@@ -130,6 +133,7 @@ public class NotificationController extends SCController {
 		if (userId == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
+		
 
 		notificationManager.updateLabelsById(id, notification.getLabelIds());
 		notificationManager.starredById(id, notification.isStarred());
@@ -139,7 +143,7 @@ public class NotificationController extends SCController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/app/{capp}/notification")
 	public @ResponseBody
-	List<Notification> getNotificationsByApp(HttpServletRequest request,
+	Notifications getNotificationsByApp(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
 			@RequestParam("since") Long since,
 			@RequestParam("position") Integer position,
@@ -151,9 +155,16 @@ public class NotificationController extends SCController {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
+		String userId = getUserId();
+		if (userId == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		}
+		
+		Notifications result=new Notifications();
+		result.setNotifications(notificationManager
+				.get(userId, capp, since, position, count, null));
 
-		return notificationManager
-				.get(null, capp, since, position, count, null);
+		return result;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/app/{capp}/notification/{id}")
@@ -210,7 +221,7 @@ public class NotificationController extends SCController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/user/notification")
 	public @ResponseBody
-	List<Notification> getNotificationsByUser(HttpServletRequest request,
+	Notifications getNotificationsByUser(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
 			@RequestParam("since") Long since,
 			@RequestParam("position") Integer position,
@@ -222,9 +233,12 @@ public class NotificationController extends SCController {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
+		
+		Notifications result=new Notifications();
+		result.setNotifications(notificationManager.get(userId, null, since, position, count,
+				null));
 
-		return notificationManager.get(userId, null, since, position, count,
-				null);
+		return result ;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/user/notification/{id}")

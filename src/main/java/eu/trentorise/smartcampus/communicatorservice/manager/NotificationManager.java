@@ -47,48 +47,51 @@ public class NotificationManager {
 	@Autowired
 	ApplePushNotificationServiceManager appleManager;
 
-	public void create(Notification notification) throws NotFoundException,
-			DataException {
+	public void create(Notification notification, Boolean isPush)
+			throws NotFoundException, DataException {
 		if (notification.getAuthor() == null)
 			throw new DataException("No Author in this notification");
 
 		storage.storeObject(notification);
+		if (isPush) {
 
-		List<AppAccount> listApp = appAccountManager
-				.getAppAccounts(notification.getType());
-		// if app registered before it can send,otherwise doesn't send in push
-		if (!listApp.isEmpty() ) {
-			// check the first appAccount
-			AppAccount appAccount = listApp.get(0);
-			// get the account could type
-			List<CloudToPushType> listType = appAccount
-					.getCloudToPushTypeConfigured();
+			List<AppAccount> listApp = appAccountManager
+					.getAppAccounts(notification.getType());
+			// if app registered before it can send,otherwise doesn't send in
+			// push
+			if (!listApp.isEmpty()) {
+				// check the first appAccount
+				AppAccount appAccount = listApp.get(0);
+				// get the account could type
+				List<CloudToPushType> listType = appAccount
+						.getCloudToPushTypeConfigured();
 
-			// send on all the cloud if a single app has more account
-			for (CloudToPushType cpt : listType) {
-				PushServiceCloud servicePush = null;
+				// send on all the cloud if a single app has more account
+				for (CloudToPushType cpt : listType) {
+					PushServiceCloud servicePush = null;
 
-				switch (cpt) {
-				case GOOGLE: {
-					servicePush = googleManager;
-					break;
-				}
-				case APPLE: {
-					servicePush = appleManager;
-					break;
-				}
-				case WINDOWSPHONE: {
-					break;
-				}
+					switch (cpt) {
+					case GOOGLE: {
+						servicePush = googleManager;
+						break;
+					}
+					case APPLE: {
+						servicePush = appleManager;
+						break;
+					}
+					case WINDOWSPHONE: {
+						break;
+					}
 
-				}
+					}
 
-				try {
-					servicePush.sendToCloud(notification);
-				} catch (NotFoundException e) {
-					throw new NotFoundException(e);
-				} catch (NoUserAccountGCM e) {
-					e.printStackTrace();
+					try {
+						servicePush.sendToCloud(notification);
+					} catch (NotFoundException e) {
+						throw new NotFoundException(e);
+					} catch (NoUserAccountGCM e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
