@@ -81,6 +81,10 @@ public class AccountController extends SCController {
 	@Autowired
 	@Value("${gcm.registration.id.default.value}")
 	private String gcm_registration_id_default_value;
+	
+	@Autowired
+	@Value("${gcm.registration.appid.default.key}")
+	private String app_id;
 
 	@Autowired
 	private AuthServices services;
@@ -113,6 +117,8 @@ public class AccountController extends SCController {
 		Map<String, String> listvalue = new HashMap<String, String>();
 		listvalue.put(gcm_sender_key, apikey);
 		listvalue.put(gcm_sender_id, senderId);
+		
+		listvalue.put(app_id, appid);
 
 		Configuration e = new Configuration(CloudToPushType.GOOGLE, listvalue);
 		listConf.add(e);
@@ -211,7 +217,7 @@ public class AccountController extends SCController {
 	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/user/{appId}")
 	public @ResponseBody
 	boolean unregisterUserToPush(HttpServletRequest request,
-			@PathVariable String appid, HttpSession session)
+			@PathVariable String appId, HttpSession session)
 			throws DataException, IOException, NotFoundException,
 			SmartCampusException, AlreadyExistException {
 
@@ -219,7 +225,7 @@ public class AccountController extends SCController {
 		UserAccount userAccount;
 
 		List<UserAccount> listUser = userAccountManager.findByUserIdAndAppName(
-				userId, appid);
+				userId, appId);
 
 		if (!listUser.isEmpty()) {
 			userAccount = listUser.get(0);
@@ -313,7 +319,7 @@ public class AccountController extends SCController {
 		Map<String, String> result = new HashMap<String, String>();
 		AppAccount index = appAccountManager.getAppAccount(appid);
 
-		if (index != null && !index.getConfigurations().isEmpty()) {
+		if (index != null && index.getConfigurations()!= null && !index.getConfigurations().isEmpty()) {
 			for (Configuration x : index.getConfigurations()) {
 				result.putAll(x.getListValue());
 			}
