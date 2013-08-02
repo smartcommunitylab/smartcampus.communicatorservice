@@ -47,16 +47,16 @@ public class NotificationManager {
 	@Autowired
 	ApplePushNotificationServiceManager appleManager;
 
-	public void create(Notification notification, Boolean isPush)
+	public void create(Notification notification)
 			throws NotFoundException, DataException {
 		if (notification.getAuthor() == null)
 			throw new DataException("No Author in this notification");
 
 		storage.storeObject(notification);
-		if (isPush) {
+		
 
 			List<AppAccount> listApp = appAccountManager
-					.getAppAccounts(notification.getType());
+					.getAppAccounts(notification.getAuthor().getAppId());
 			// if app registered before it can send,otherwise doesn't send in
 			// push
 			if (!listApp.isEmpty()) {
@@ -94,7 +94,7 @@ public class NotificationManager {
 					}
 				}
 			}
-		}
+		
 	}
 
 	public boolean deleteByApp(String id, String capp)

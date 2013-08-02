@@ -197,7 +197,7 @@ public class AccountController extends SCController {
 		not.setAuthor(notAuth);
 
 		try {
-			notificationManager.create(not,false);
+			notificationManager.create(not);
 		} catch (NotFoundException e1) {
 			e1.printStackTrace();
 		}
@@ -277,7 +277,7 @@ public class AccountController extends SCController {
 		for (String receiver : userIds) {
 			notification.setId(null);
 			notification.setUser(receiver);
-			notificationManager.create(notification,false);
+			notificationManager.create(notification);
 		}
 	}
 
@@ -298,7 +298,7 @@ public class AccountController extends SCController {
 		for (String receiver : userIds) {
 			notification.setId(null);
 			notification.setUser(receiver);
-			notificationManager.create(notification,false);
+			notificationManager.create(notification);
 		}
 	}
 
