@@ -65,7 +65,7 @@
 	<resourceMapping method="DELETE"
 		pathPattern="/unregister/app/{capp}" uri="communicator.register.{capp}" />
 	<resourceMapping method="GET"
-		pathPattern="/configuration/user/{capp}" uri="communicator.register.user.{capp}" />
+		pathPattern="/configuration/user/{capp}" uri="communicator.register.user.{capp}" />	
 	<resourceMapping method="DELETE"
 		pathPattern="/unregister/user/{capp}" uri="communicator.register.user.{capp}" />
 	<resourceMapping method="POST"

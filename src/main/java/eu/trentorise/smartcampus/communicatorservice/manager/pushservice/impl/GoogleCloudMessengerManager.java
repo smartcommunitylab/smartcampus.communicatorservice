@@ -79,7 +79,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		while (indexConf.hasNext() && senderId == null) {
 			Configuration conf = indexConf.next();
 			if (CloudToPushType.GOOGLE.compareTo(conf.getKey()) == 0) {
-				senderId = conf.getListValue().get(gcm_sender_id);
+				senderId = conf.get(gcm_sender_id) ;
 			} else {
 				throw new NotFoundException();
 			}
@@ -101,7 +101,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 					.getConfigurations();
 			for (Configuration index : listConfUser) {
 				if (CloudToPushType.GOOGLE.compareTo(index.getKey()) == 0) {
-					devices = index.getListValue().get(
+					devices = index.get(
 							gcm_registration_id_default_key);
 					configurationSelected = index;
 				}
@@ -124,10 +124,10 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 					String canonicalRegId = result.getCanonicalRegistrationId();
 					if (canonicalRegId != null) {
 						// update new registrationid in my database
-						configurationSelected.getListValue().remove(
+						configurationSelected.remove(
 								gcm_registration_id_default_key);
-						configurationSelected.getListValue()
-								.put(gcm_registration_id_default_key,
+						configurationSelected
+								.putPrivate(gcm_registration_id_default_key,
 										canonicalRegId);
 						userAccountManager.update(userAccountSelected);
 						return true;

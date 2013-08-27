@@ -103,24 +103,25 @@ public class AccountController extends SCController {
 			HttpSession session) throws DataException, IOException,
 			NotFoundException, SmartCampusException, AlreadyExistException {
 
-		String senderId = signature.getSenderId();
-		String apikey = signature.getApiKey();
+	//	String senderId = signature.getSenderId();
+	//	String apikey = signature.getApiKey();
 		String appId = signature.getAppId();
 
 		List<Configuration> listConf = new ArrayList<Configuration>();
 
 		// set value of sender/serverside app registration code
-		if (apikey == null)
+		if (signature.getPrivateKey() == null)
 			throw new NotFoundException();
 		// if app is not registered?use ours?
 
-		Map<String, String> listvalue = new HashMap<String, String>();
-		listvalue.put(gcm_sender_key, apikey);
-		listvalue.put(gcm_sender_id, senderId);
 		
-		listvalue.put(app_id, appid);
+//		listvalue.put(gcm_sender_key, apikey);
+//		listvalue.put(gcm_sender_id, senderId);
+//		
+//		listvalue.put(app_id, appid);
+//
+		Configuration e = new Configuration(CloudToPushType.GOOGLE, signature.getPrivateKey(),signature.getPublicKey());
 
-		Configuration e = new Configuration(CloudToPushType.GOOGLE, listvalue);
 		listConf.add(e);
 
 		AppAccount appAccount;
@@ -321,7 +322,8 @@ public class AccountController extends SCController {
 
 		if (index != null && index.getConfigurations()!= null && !index.getConfigurations().isEmpty()) {
 			for (Configuration x : index.getConfigurations()) {
-				result.putAll(x.getListValue());
+				result.putAll(x.getPrivateKey());
+				result.putAll(x.getPublicKey());
 			}
 		}
 
@@ -345,7 +347,8 @@ public class AccountController extends SCController {
 		for (UserAccount index : list) {
 			if (index != null && !index.getConfigurations().isEmpty()) {
 				for (Configuration x : index.getConfigurations()) {
-					result.putAll(x.getListValue());
+					result.putAll(x.getPrivateKey());
+					result.putAll(x.getPublicKey());
 				}
 			}
 
@@ -353,5 +356,26 @@ public class AccountController extends SCController {
 		return result;
 
 	}
+	
+	// TODO client flow
+		@RequestMapping(method = RequestMethod.GET, value = "/configuration/{appid}")
+		public @ResponseBody
+		Map<String, String> requestPublicAppConfigurationToPush(
+				HttpServletRequest request, @PathVariable String appid,
+				HttpSession session) throws DataException, IOException,
+				NotFoundException, SmartCampusException, AlreadyExistException {
+
+			Map<String, String> result = new HashMap<String, String>();
+			AppAccount index = appAccountManager.getAppAccount(appid);
+
+			if (index != null && index.getConfigurations()!= null && !index.getConfigurations().isEmpty()) {
+				for (Configuration x : index.getConfigurations()) {
+					result.putAll(x.getPublicKey());
+				}
+			}
+
+			return result;
+
+		}
 
 }

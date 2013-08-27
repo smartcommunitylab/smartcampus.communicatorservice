@@ -1,5 +1,7 @@
 package eu.trentorise.smartcampus.communicator.model;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -9,26 +11,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class AppSignature {
 
 	private String appId;
+	
+	private Map<String,String> privateKey;
+	
+	private Map<String,String> publicKey;
 
-	private String senderId;
 
-	private String apiKey;
-
-	public String getSenderId() {
-		return senderId;
-	}
-
-	public void setSenderId(String senderId) {
-		this.senderId = senderId;
-	}
-
-	public String getApiKey() {
-		return apiKey;
-	}
-
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
-	}
+	
 
 	public String getAppId() {
 		return appId;
@@ -36,6 +25,22 @@ public class AppSignature {
 
 	public void setAppId(String appId) {
 		this.appId = appId;
+	}
+
+	public Map<String,String> getPublicKey() {
+		return publicKey;
+	}
+
+	public void setPublicKey(Map<String,String> publicKey) {
+		this.publicKey = publicKey;
+	}
+
+	public Map<String,String> getPrivateKey() {
+		return privateKey;
+	}
+
+	public void setPrivateKey(Map<String,String> privateKey) {
+		this.privateKey = privateKey;
 	}
 
 }

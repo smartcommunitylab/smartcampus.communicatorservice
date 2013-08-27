@@ -44,16 +44,26 @@ public class Configuration {
 	 */
 	private CloudToPushType key;
 
-	private String listValue;
+	private String privateKey;
+
+	private String publicKey;
 
 	public Configuration() {
 
 	}
 
-	public Configuration(CloudToPushType key, Map<String, String> listValue)
+	public Configuration(CloudToPushType key, Map<String, String> privateKey,
+			Map<String, String> publicKey) throws JsonGenerationException,
+			JsonMappingException, IOException {
+		this.setKey(key);
+		this.setPublicKey(publicKey);
+		this.setPrivateKey(privateKey);
+	}
+
+	public Configuration(CloudToPushType key, Map<String, String> privateKey)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		this.setKey(key);
-		this.setListValue(listValue);
+		this.setPrivateKey(privateKey);
 	}
 
 	public CloudToPushType getKey() {
@@ -64,18 +74,54 @@ public class Configuration {
 		this.key = key;
 	}
 
-	public void setListValue(Map<String, String> listValue)
+	public void setPublicKey(Map<String, String> listValue)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		this.listValue = mapper.writeValueAsString(listValue);
+		this.publicKey = mapper.writeValueAsString(listValue);
 	}
 
 	@SuppressWarnings("unchecked")
-	public Map<String, String> getListValue() {
+	public Map<String, String> getPublicKey() {
 		try {
-			return mapper.readValue(listValue, Map.class);
+			return mapper.readValue(publicKey, Map.class);
 		} catch (Exception e) {
 			return null;
 		}
+	}
+
+	public void setPrivateKey(Map<String, String> listValue)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		this.privateKey = mapper.writeValueAsString(listValue);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Map<String, String> getPrivateKey() {
+		try {
+			return mapper.readValue(privateKey, Map.class);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public String get(String key) {
+		if (getPrivateKey().get(key) != null)
+			return getPrivateKey().get(key);
+		else
+			return getPublicKey().get(key);
+	}
+
+	public void remove(String key) {
+		getPrivateKey().remove(key);
+		getPublicKey().remove(key);
+	}
+
+	public void putPublic(String key, String value) {
+		getPublicKey().put(key, value);
+
+	}
+
+	public void putPrivate(String key, String value) {
+		getPrivateKey().put(key, value);
+
 	}
 
 }
