@@ -358,7 +358,7 @@ public class AccountController extends SCController {
 	}
 	
 	// TODO client flow
-		@RequestMapping(method = RequestMethod.GET, value = "/configuration/{appid}")
+		@RequestMapping(method = RequestMethod.GET, value = "/configuration/public/{appid}")
 		public @ResponseBody
 		Map<String, String> requestPublicAppConfigurationToPush(
 				HttpServletRequest request, @PathVariable String appid,
