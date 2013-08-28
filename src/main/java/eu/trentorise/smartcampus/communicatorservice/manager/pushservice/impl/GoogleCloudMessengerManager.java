@@ -65,7 +65,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		// in default case is the system messenger that send
 		String senderId = null;
 		Sender sender = null;
-		String senderAppName = notification.getType();
+		String senderAppName = notification.getAuthor().getAppId();
 
 		AppAccount appAccount;
 		List<AppAccount> listApp = appAccountManager

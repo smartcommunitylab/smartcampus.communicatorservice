@@ -12,8 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AppAccount {
-	private String id;
-	private String appName;
+	private String id;	
 	private String appId;
 
 	@XmlElementWrapper
@@ -27,14 +26,7 @@ public class AppAccount {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public String getAppName() {
-		return appName;
-	}
-
-	public void setAppName(String appName) {
-		this.appName = appName;
-	}
+	
 
 	public List<Configuration> getConfigurations() {
 		return configurations;

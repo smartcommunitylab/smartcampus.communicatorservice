@@ -54,7 +54,8 @@ public class NotificationManager {
 
 		storage.storeObject(notification);
 		
-
+		if(notification.getAuthor().getAppId()!=null){
+			
 			List<AppAccount> listApp = appAccountManager
 					.getAppAccounts(notification.getAuthor().getAppId());
 			// if app registered before it can send,otherwise doesn't send in
@@ -63,8 +64,12 @@ public class NotificationManager {
 				// check the first appAccount
 				AppAccount appAccount = listApp.get(0);
 				// get the account could type
+				
 				List<CloudToPushType> listType = appAccount
 						.getCloudToPushTypeConfigured();
+				
+					
+				
 
 				// send on all the cloud if a single app has more account
 				for (CloudToPushType cpt : listType) {
@@ -93,7 +98,10 @@ public class NotificationManager {
 						e.printStackTrace();
 					}
 				}
+			}else{
+				throw new NotFoundException("App account not registered");
 			}
+		}
 		
 	}
 

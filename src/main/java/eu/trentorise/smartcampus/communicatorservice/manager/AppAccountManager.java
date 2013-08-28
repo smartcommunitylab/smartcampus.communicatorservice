@@ -29,7 +29,7 @@ public class AppAccountManager {
 		if (appAccount.getAppId() != null
 				&& db.findById(appAccount.getAppId(), AppAccount.class) != null) {
 			logger.error("AppAccount already stored, "
-					+ appAccount.getAppName());
+					+ appAccount.getAppId());
 			throw new AlreadyExistException();
 		}
 		if (appAccount.getId() == null

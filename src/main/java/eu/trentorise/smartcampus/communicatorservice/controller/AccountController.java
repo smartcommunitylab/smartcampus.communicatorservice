@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
 import eu.trentorise.smartcampus.communicator.model.AppSignature;
@@ -49,6 +50,7 @@ import eu.trentorise.smartcampus.communicatorservice.exceptions.SmartCampusExcep
 import eu.trentorise.smartcampus.communicatorservice.manager.AppAccountManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.NotificationManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.UserAccountManager;
+
 import eu.trentorise.smartcampus.presentation.common.exception.DataException;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 import eu.trentorise.smartcampus.resourceprovider.controller.SCController;
@@ -92,6 +94,15 @@ public class AccountController extends SCController {
 	@Override
 	protected AuthServices getAuthServices() {
 		return services;
+	}
+	
+	@RequestMapping("/registration")
+	public ModelAndView developer() {
+		Map<String,Object> model = new HashMap<String, Object>();
+	
+	
+		model.put("username","x");
+		return new ModelAndView("index", model);
 	}
 
 	// TODO appName or id required
@@ -259,7 +270,7 @@ public class AccountController extends SCController {
 			
 
 			listUser.setConfigurations(null);
-			appAccountManager.update(listUser);
+			appAccountManager.delete(appId);
 
 		}
 
@@ -288,7 +299,7 @@ public class AccountController extends SCController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/send/user")
+	//@RequestMapping(method = RequestMethod.POST, value = "/send/user")
 	public @ResponseBody
 	void sendUserNotification(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
@@ -348,6 +359,7 @@ public class AccountController extends SCController {
 			if (index != null && !index.getConfigurations().isEmpty()) {
 				for (Configuration x : index.getConfigurations()) {
 					result.putAll(x.getPrivateKey());
+					if(x.getPublicKey()!=null)
 					result.putAll(x.getPublicKey());
 				}
 			}
