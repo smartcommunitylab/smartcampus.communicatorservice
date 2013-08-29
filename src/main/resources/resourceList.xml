@@ -54,8 +54,8 @@
 	<resourceMapping method="DELETE"
 		pathPattern="/user/notification/{idn}"
 		uri="communicator.user.msg.write" />
-	<resourceMapping method="POST" pathPattern="/send/user"
-		uri="communicator.send.user" />
+	<!--  <resourceMapping method="POST" pathPattern="/send/user"
+		uri="communicator.send.user" /> -->
 	<resourceMapping method="POST"
 		pathPattern="/send/app/{capp}" uri="communicator.send.app.{capp}" />
 	<resourceMapping method="GET"

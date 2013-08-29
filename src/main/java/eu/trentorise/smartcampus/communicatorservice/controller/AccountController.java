@@ -291,6 +291,7 @@ public class AccountController extends SCController {
 		author.setAppId(appId);
 
 		notification.setType(appId);
+		notification.setAuthor(author);
 
 		for (String receiver : userIds) {
 			notification.setId(null);

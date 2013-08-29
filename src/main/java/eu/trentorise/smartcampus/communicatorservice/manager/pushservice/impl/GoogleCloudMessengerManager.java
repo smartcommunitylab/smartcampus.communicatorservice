@@ -99,11 +99,13 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 
 			List<Configuration> listConfUser = userAccountSelected
 					.getConfigurations();
-			for (Configuration index : listConfUser) {
-				if (CloudToPushType.GOOGLE.compareTo(index.getKey()) == 0) {
-					devices = index.get(
-							gcm_registration_id_default_key);
-					configurationSelected = index;
+			if(listConfUser!=null && !listConfUser.isEmpty()){
+				for (Configuration index : listConfUser) {
+					if (CloudToPushType.GOOGLE.compareTo(index.getKey()) == 0) {
+						devices = index.get(
+								gcm_registration_id_default_key);
+						configurationSelected = index;
+					}
 				}
 			}
 
