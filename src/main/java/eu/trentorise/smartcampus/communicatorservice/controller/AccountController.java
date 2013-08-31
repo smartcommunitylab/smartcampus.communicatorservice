@@ -96,14 +96,10 @@ public class AccountController extends SCController {
 		return services;
 	}
 	
-	@RequestMapping("/registration")
-	public ModelAndView developer() {
-		Map<String,Object> model = new HashMap<String, Object>();
-	
-	
-		model.put("username","x");
-		return new ModelAndView("index", model);
-	}
+	@RequestMapping(method = RequestMethod.GET, value = "/conf/registration")
+	  public String storageConf() throws SmartCampusException, NotFoundException {
+	    return "registration";
+	  }
 
 	// TODO appName or id required
 	// TODO client flow
@@ -116,7 +112,7 @@ public class AccountController extends SCController {
 
 	//	String senderId = signature.getSenderId();
 	//	String apikey = signature.getApiKey();
-		String appId = signature.getAppId();
+	//	String appId = signature.getAppId();
 
 		List<Configuration> listConf = new ArrayList<Configuration>();
 
@@ -136,10 +132,10 @@ public class AccountController extends SCController {
 		listConf.add(e);
 
 		AppAccount appAccount;
-		List<AppAccount> listApp = appAccountManager.getAppAccounts(appId);
+		List<AppAccount> listApp = appAccountManager.getAppAccounts(appid);
 		if (listApp.isEmpty()) {
 			appAccount = new AppAccount();
-			appAccount.setAppId(appId);
+			appAccount.setAppId(appid);
 			appAccount.setConfigurations(listConf);
 			appAccountManager.save(appAccount);
 		} else {
@@ -204,21 +200,21 @@ public class AccountController extends SCController {
 		userAccount.setConfigurations(listConf);
 		userAccountManager.update(userAccount);
 
-		Notification not = new Notification();
-		not.setDescription("Sei Registrato alle notifiche push");
-		not.setTitle("Sei Registrato alle notifiche push");
-		not.setType(appName);
-		not.setUser(String.valueOf(userAccount.getUserId()));
-		not.setId(null);
-		NotificationAuthor notAuth = new NotificationAuthor();
-		notAuth.setAppId(appid);
-		not.setAuthor(notAuth);
-
-		try {
-			notificationManager.create(not);
-		} catch (NotFoundException e1) {
-			e1.printStackTrace();
-		}
+//		Notification not = new Notification();
+//		not.setDescription("Sei Registrato alle notifiche push");
+//		not.setTitle("Sei Registrato alle notifiche push");
+//		not.setType(appName);
+//		not.setUser(String.valueOf(userAccount.getUserId()));
+//		not.setId(null);
+//		NotificationAuthor notAuth = new NotificationAuthor();
+//		notAuth.setAppId(appid);
+//		not.setAuthor(notAuth);
+//
+//		try {
+//			notificationManager.create(not);
+//		} catch (NotFoundException e1) {
+//			e1.printStackTrace();
+//		}
 
 		return true;
 
@@ -324,22 +320,28 @@ public class AccountController extends SCController {
 	// TODO client flow
 	@RequestMapping(method = RequestMethod.GET, value = "/configuration/app/{appid}")
 	public @ResponseBody
-	Map<String, String> requestAppConfigurationToPush(
+	AppSignature requestAppConfigurationToPush(
 			HttpServletRequest request, @PathVariable String appid,
 			HttpSession session) throws DataException, IOException,
 			NotFoundException, SmartCampusException, AlreadyExistException {
 
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, String> publicList = new HashMap<String, String>();
+		Map<String, String> privateList = new HashMap<String, String>();
 		AppAccount index = appAccountManager.getAppAccount(appid);
 
 		if (index != null && index.getConfigurations()!= null && !index.getConfigurations().isEmpty()) {
 			for (Configuration x : index.getConfigurations()) {
-				result.putAll(x.getPrivateKey());
-				result.putAll(x.getPublicKey());
+				privateList.putAll(x.getPrivateKey());
+				publicList.putAll(x.getPublicKey());
 			}
 		}
 
-		return result;
+		AppSignature appSignature=new AppSignature();
+		appSignature.setAppId(appid);
+		appSignature.setPrivateKey(privateList);
+		appSignature.setPublicKey(publicList);
+		
+		return appSignature;
 
 	}
 

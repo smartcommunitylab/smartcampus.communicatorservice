@@ -18,7 +18,7 @@
 	<resource name="Id" id="idn" />
 	<resource name="Users" id="users" />
 
-	<resourceMapping method="GET"
+	<!-- <resourceMapping method="GET"
 		pathPattern="/notification"
 		uri="communicator.msg.read" />
 	<resourceMapping method="GET"
@@ -29,7 +29,7 @@
 		uri="communicator.msg.write" />
 	<resourceMapping method="DELETE"
 		pathPattern="/notification/{idn}"
-		uri="communicator.msg.write" />
+		uri="communicator.msg.write" /> -->
 	<resourceMapping method="GET"
 		pathPattern="/app/{capp}/notification"
 		uri="communicator.app.msg.read.{capp}" />

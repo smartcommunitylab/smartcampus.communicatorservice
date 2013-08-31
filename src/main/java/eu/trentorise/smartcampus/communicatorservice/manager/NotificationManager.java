@@ -52,6 +52,8 @@ public class NotificationManager {
 		if (notification.getAuthor() == null)
 			throw new DataException("No Author in this notification");
 
+		notification.setUpdateTime(System.currentTimeMillis());
+		notification.setTimestamp(System.currentTimeMillis());
 		storage.storeObject(notification);
 		
 		if(notification.getAuthor().getAppId()!=null){
@@ -193,6 +195,7 @@ public class NotificationManager {
 		Notification notification = storage.getObjectByIdAndUser(id, userId,
 				Notification.class);
 		notification.setStarred(starred);
+		notification.setUpdateTime(System.currentTimeMillis());
 		storage.storeObject(notification);
 	}
 
@@ -201,6 +204,7 @@ public class NotificationManager {
 		Notification notification = storage.getObjectByIdAndApp(id, capp,
 				Notification.class);
 		notification.setStarred(starred);
+		notification.setUpdateTime(System.currentTimeMillis());
 		storage.storeObject(notification);
 	}
 
@@ -209,6 +213,7 @@ public class NotificationManager {
 		Notification notification = storage.getObjectById(id,
 				Notification.class);
 		notification.setStarred(starred);
+		notification.setUpdateTime(System.currentTimeMillis());
 		storage.storeObject(notification);
 	}
 
@@ -217,6 +222,7 @@ public class NotificationManager {
 		Notification notification = storage.getObjectByIdAndApp(id, capp,
 				Notification.class);
 		notification.setLabelIds(labelIds);
+		notification.setUpdateTime(System.currentTimeMillis());
 		storage.storeObject(notification);
 	}
 
@@ -225,6 +231,7 @@ public class NotificationManager {
 		Notification notification = storage.getObjectById(id,
 				Notification.class);
 		notification.setLabelIds(labelIds);
+		notification.setUpdateTime(System.currentTimeMillis());
 		storage.storeObject(notification);
 	}
 
@@ -233,6 +240,7 @@ public class NotificationManager {
 		Notification notification = storage.getObjectByIdAndUser(id, userid,
 				Notification.class);
 		notification.setLabelIds(labelIds);
+		notification.setUpdateTime(System.currentTimeMillis());
 		storage.storeObject(notification);
 	}
 

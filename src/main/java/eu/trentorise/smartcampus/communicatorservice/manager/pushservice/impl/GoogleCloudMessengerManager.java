@@ -107,50 +107,51 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 						configurationSelected = index;
 					}
 				}
-			}
+				Message message = new Message.Builder()
+				.collapseKey("1")
+				.timeToLive(3)
+				.delayWhileIdle(true)
+				.addData(notification.getTitle(),
+						notification.getDescription()).build();
+		Result result;
+		try {
 
-			Message message = new Message.Builder()
-					.collapseKey("1")
-					.timeToLive(3)
-					.delayWhileIdle(true)
-					.addData(notification.getTitle(),
-							notification.getDescription()).build();
-			Result result;
-			try {
+			result = sender.send(message, devices, 5);
 
-				result = sender.send(message, devices, 5);
+			System.out.println(result.toString());
 
-				System.out.println(result.toString());
-
-				if (result.getMessageId() != null) {
-					String canonicalRegId = result.getCanonicalRegistrationId();
-					if (canonicalRegId != null) {
-						// update new registrationid in my database
-						configurationSelected.remove(
-								gcm_registration_id_default_key);
-						configurationSelected
-								.putPrivate(gcm_registration_id_default_key,
-										canonicalRegId);
-						userAccountManager.update(userAccountSelected);
-						return true;
-					} else {
-						return true;
-					}
+			if (result.getMessageId() != null) {
+				String canonicalRegId = result.getCanonicalRegistrationId();
+				if (canonicalRegId != null) {
+					// update new registrationid in my database
+					configurationSelected.remove(
+							gcm_registration_id_default_key);
+					configurationSelected
+							.putPrivate(gcm_registration_id_default_key,
+									canonicalRegId);
+					userAccountManager.update(userAccountSelected);
+					return true;
 				} else {
-					String error = result.getErrorCodeName();
-					if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
-						// remove appconfigutaion on this user account
-						userAccountSelected.getConfigurations().remove(
-								configurationSelected);
-						return false;
-					}
+					return true;
 				}
-
-			} catch (Exception e) {
-				logger.error(e.getMessage() + senderId);
-				e.printStackTrace();
-				return false;
+			} else {
+				String error = result.getErrorCodeName();
+				if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
+					// remove appconfigutaion on this user account
+					userAccountSelected.getConfigurations().remove(
+							configurationSelected);
+					return false;
+				}
 			}
+
+		} catch (Exception e) {
+			logger.error(e.getMessage() + senderId);
+			e.printStackTrace();
+			return false;
+		}
+			}
+
+			
 		}else{
 			throw new NoUserAccountGCM("The user is not register for receive push notification");
 		}
