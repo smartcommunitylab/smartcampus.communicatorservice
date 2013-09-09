@@ -49,8 +49,8 @@
         <form ng-submit="saveConfiguration()">
             <fieldset>                 
                <label>Add PUBLIC configuration parameter</label>
-               gcm.sender.key=GCM_SENDER_API_KEY
-gcm.sender.id=GCM_SENDER_ID
+               <p style="font-size: 8px;color: #666"> (For the Push Service you must set GCM_SENDER_API_KEY and GCM_SENDER_ID with Google API value)</p>
+          <br/>
  							<div class="row-fluid">
 						    <div class="span7">
 							    <input type="text" ng-model="pnamePublic" placeholder="parameter key" class="input-xlarge">
