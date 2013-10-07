@@ -25,7 +25,7 @@ public class EntityObject implements Serializable {
 	private String id;
 	private Map<String, Object> data;
 	private String title;
-	private Long entityId;
+	private String entityId;
 
 	public String getType() {
 		return type;
@@ -59,11 +59,11 @@ public class EntityObject implements Serializable {
 		this.title = title;
 	}
 
-	public Long getEntityId() {
+	public String getEntityId() {
 		return entityId;
 	}
 
-	public void setEntityId(Long entityId) {
+	public void setEntityId(String entityId) {
 		this.entityId = entityId;
 	}
 }
