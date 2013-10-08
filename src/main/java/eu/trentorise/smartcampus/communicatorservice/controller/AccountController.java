@@ -225,7 +225,7 @@ public class AccountController extends SCController {
 	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/user/{appid:.*}")
 	public @ResponseBody
 	boolean unregisterUserToPush(HttpServletRequest request,
-			@PathVariable String appId, HttpSession session)
+			@PathVariable String appid, HttpSession session)
 			throws DataException, IOException, NotFoundException,
 			SmartCampusException, AlreadyExistException {
 
@@ -233,7 +233,7 @@ public class AccountController extends SCController {
 		UserAccount userAccount;
 
 		List<UserAccount> listUser = userAccountManager.findByUserIdAndAppName(
-				userId, appId);
+				userId, appid);
 
 		if (!listUser.isEmpty()) {
 			userAccount = listUser.get(0);
@@ -252,21 +252,21 @@ public class AccountController extends SCController {
 	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/app/{appid:.*}")
 	public @ResponseBody
 	boolean unregisterAppToPush(HttpServletRequest request,
-			@PathVariable String appId, HttpSession session)
+			@PathVariable String appid, HttpSession session)
 			throws DataException, IOException, NotFoundException,
 			SmartCampusException, AlreadyExistException {
 
 		
 		
 
-		AppAccount listUser = appAccountManager.getAppAccount(appId);
+		AppAccount listUser = appAccountManager.getAppAccount(appid);
 				
 
 		if (listUser!=null) {
 			
 
 			listUser.setConfigurations(null);
-			appAccountManager.delete(appId);
+			appAccountManager.delete(appid);
 
 		}
 
@@ -274,7 +274,7 @@ public class AccountController extends SCController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/send/app/{appid:.*}")
+	@RequestMapping(method = RequestMethod.POST, value = "/send/app/{appId:.*}")
 	public @ResponseBody
 	void sendAppNotification(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
