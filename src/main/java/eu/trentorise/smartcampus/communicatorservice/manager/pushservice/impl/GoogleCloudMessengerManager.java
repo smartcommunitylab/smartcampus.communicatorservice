@@ -78,7 +78,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 
 		while (indexConf.hasNext() && senderId == null) {
 			Configuration conf = indexConf.next();
-			if (CloudToPushType.GOOGLE.compareTo(conf.getKey()) == 0) {
+			if (CloudToPushType.GOOGLE.compareTo(conf.getKey()) == 0 && conf.get(gcm_sender_id)!=null) {
 				senderId = conf.get(gcm_sender_id) ;
 			} else {
 				throw new NotFoundException();

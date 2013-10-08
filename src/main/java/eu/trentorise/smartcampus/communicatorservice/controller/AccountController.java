@@ -103,7 +103,7 @@ public class AccountController extends SCController {
 
 	// TODO appName or id required
 	// TODO client flow
-	@RequestMapping(method = RequestMethod.POST, value = "/register/app/{appid}")
+	@RequestMapping(method = RequestMethod.POST, value = "/register/app/{appid:.*}")
 	public @ResponseBody
 	boolean registerApp(HttpServletRequest request,
 			@RequestBody AppSignature signature, @PathVariable String appid,
@@ -150,7 +150,7 @@ public class AccountController extends SCController {
 
 	// TODO appName or id required
 	// TODO client flow, userid required as input
-	@RequestMapping(method = RequestMethod.POST, value = "/register/user/{appid}")
+	@RequestMapping(method = RequestMethod.POST, value = "/register/user/{appid:.*}")
 	public @ResponseBody
 	boolean registerUserToPush(HttpServletRequest request,
 			@PathVariable String appid, @RequestBody UserSignature signature,
@@ -222,7 +222,7 @@ public class AccountController extends SCController {
 
 	// TODO DELETE method instead of GET
 	// TODO client flow, userid required as input
-	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/user/{appId}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/user/{appid:.*}")
 	public @ResponseBody
 	boolean unregisterUserToPush(HttpServletRequest request,
 			@PathVariable String appId, HttpSession session)
@@ -249,7 +249,7 @@ public class AccountController extends SCController {
 
 	// TODO DELETE method instead of GET
 	// TODO client flow, userid required as input
-	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/app/{appId}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/app/{appid:.*}")
 	public @ResponseBody
 	boolean unregisterAppToPush(HttpServletRequest request,
 			@PathVariable String appId, HttpSession session)
@@ -274,7 +274,7 @@ public class AccountController extends SCController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/send/app/{appId}")
+	@RequestMapping(method = RequestMethod.POST, value = "/send/app/{appid:.*}")
 	public @ResponseBody
 	void sendAppNotification(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
@@ -318,7 +318,7 @@ public class AccountController extends SCController {
 	}
 
 	// TODO client flow
-	@RequestMapping(method = RequestMethod.GET, value = "/configuration/app/{appid}")
+	@RequestMapping(method = RequestMethod.GET, value = "/configuration/app/{appid:.*}")
 	public @ResponseBody
 	AppSignature requestAppConfigurationToPush(
 			HttpServletRequest request, @PathVariable String appid,
@@ -346,7 +346,7 @@ public class AccountController extends SCController {
 	}
 
 	// TODO client flow
-	@RequestMapping(method = RequestMethod.GET, value = "/configuration/user/{appid}")
+	@RequestMapping(method = RequestMethod.GET, value = "/configuration/user/{appid:.*}")
 	public @ResponseBody
 	Map<String, String> requestUserConfigurationToPush(
 			HttpServletRequest request, @PathVariable String appid,
@@ -373,7 +373,7 @@ public class AccountController extends SCController {
 	}
 	
 	// TODO client flow
-		@RequestMapping(method = RequestMethod.GET, value = "/configuration/public/{appid}")
+		@RequestMapping(method = RequestMethod.GET, value = "/configuration/public/{appid:.*}")
 		public @ResponseBody
 		Map<String, String> requestPublicAppConfigurationToPush(
 				HttpServletRequest request, @PathVariable String appid,
