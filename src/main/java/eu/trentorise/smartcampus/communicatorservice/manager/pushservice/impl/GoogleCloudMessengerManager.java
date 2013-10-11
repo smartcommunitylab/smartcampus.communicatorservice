@@ -92,7 +92,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		List<UserAccount> listUserAccount = userAccountManager
 				.findByUserIdAndAppName(notification.getUser(), senderAppName);
 
-		if (!listUserAccount.isEmpty()) {
+		if (!listUserAccount.isEmpty() && sender!=null) {
 
 			UserAccount userAccountSelected = listUserAccount.get(0);
 			Configuration configurationSelected = new Configuration();
@@ -153,7 +153,9 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 
 			
 		}else{
-			throw new NoUserAccountGCM("The user is not register for receive push notification");
+			logger.warn("The user "+ notification.getUser() +" is not register for receive push notification");
+			return false;
+			//throw new NoUserAccountGCM("The user is not register for receive push notification");
 		}
 		return false;
 	}

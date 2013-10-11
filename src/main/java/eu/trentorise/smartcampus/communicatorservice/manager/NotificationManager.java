@@ -17,6 +17,7 @@ package eu.trentorise.smartcampus.communicatorservice.manager;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +35,9 @@ import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException
 
 @Component
 public class NotificationManager {
+	
+	private static final Logger logger = Logger
+			.getLogger(NotificationManager.class);
 
 	@Autowired
 	CommunicatorStorage storage;
@@ -101,7 +105,8 @@ public class NotificationManager {
 					}
 				}
 			}else{
-				throw new NotFoundException("App account not registered");
+				logger.warn("The app account "+ notification.getAuthor().getAppId() +" not yet registered");
+				//throw new NotFoundException("App account not registered");
 			}
 		}
 		
