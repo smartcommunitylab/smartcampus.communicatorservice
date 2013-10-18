@@ -14,14 +14,13 @@
  *    limitations under the License.
  */
 
-package eu.trentorise.smartcampus.communicator.model;
+@charset "UTF-8";
 
-/**
- * Types of storage
- * 
- * @author mirko perillo
- * 
- */
-public enum CloudToPushType {
-	APPLE, GOOGLE, WINDOWSPHONE
+.hr-min {
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.shift {
+	margin-left: 20px;
 }

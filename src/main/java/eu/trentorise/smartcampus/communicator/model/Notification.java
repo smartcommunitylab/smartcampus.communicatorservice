@@ -36,11 +36,11 @@ public class Notification extends BasicObject {
 	private List<EntityObject> entities;
 
 	private NotificationAuthor author;
-	
+
 	private boolean readed;
 
 	private transient boolean markDeleted;
-	
+
 	public Notification() {
 		super();
 	}
@@ -108,11 +108,13 @@ public class Notification extends BasicObject {
 	public void setChannelIds(List<String> channelIds) {
 		this.channelIds = channelIds;
 	}
+
 	public void addChannelId(String channelId) {
-		if (channelIds == null) channelIds = new ArrayList<String>();
+		if (channelIds == null)
+			channelIds = new ArrayList<String>();
 		channelIds.add(channelId);
 	}
-	
+
 	public boolean isReaded() {
 		return readed;
 	}
@@ -146,9 +148,9 @@ public class Notification extends BasicObject {
 	}
 
 	public static String userCopyId(String id, String userId) {
-		return id+"_"+userId;
+		return id + "_" + userId;
 	}
-	
+
 	public Notification copy(String userId) {
 		Notification notification = new Notification();
 		notification.setAuthor(author);
@@ -167,10 +169,10 @@ public class Notification extends BasicObject {
 		return notification;
 	}
 
-	
 	public void markAsDeleted() {
 		markDeleted = true;
 	}
+
 	public boolean markedDeleted() {
 		return markDeleted;
 	}

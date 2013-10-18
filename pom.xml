@@ -2,15 +2,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.trentorise.smartcampus</groupId>
-	<artifactId>smartcampus.communicatorservice</artifactId>
-	<version>1.0</version>
+	<artifactId>smartcampus.communicator</artifactId>
+	<version>2.0</version>
 	<packaging>war</packaging>
-	<name>smartcampus.communicatorservice</name>
-	
+	<name>smartcampus.communicator</name>
+
 	<parent>
 		<groupId>eu.trentorise.smartcampus</groupId>
 		<artifactId>vas-web-conf</artifactId>
-		<version>1.4</version>
+		<version>1.5</version>
 	</parent>
 
 	<properties>
@@ -26,6 +26,12 @@
 			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-test</artifactId>
+  <version>2.5</version>
+</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -41,11 +47,40 @@
 			<version>1.1</version>
 		</dependency>
 
+		<!-- <dependency> <groupId>eu.trentorise.smartcampus</groupId> <artifactId>smartcampus.vas.commons</artifactId> 
+			<version>1.1</version> </dependency> -->
+
 		<dependency>
 			<groupId>eu.trentorise.smartcampus</groupId>
-			<artifactId>smartcampus.vas.commons</artifactId>
-			<version>1.1</version>
+			<artifactId>resource.api</artifactId>
+			<version>1.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>1.0.4.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>2.5</version>
+		</dependency>
+		
+		  <dependency>
+            <groupId>eu.trentorise.smartcampus</groupId>
+            <artifactId>smartcampus.socialservice.model</artifactId>
+            <version>1.1</version>
+        </dependency>
+
 
 		<dependency>
 			<groupId>com.google.android.gcm</groupId>
@@ -54,9 +89,21 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<version>1.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.24</version>
 		</dependency>
 
 		<!-- app engine google <dependency> <groupId>com.google.appengine</groupId> 
@@ -78,7 +125,7 @@
 				<version>${appengine.target.version}</version> </plugin> -->
 		</plugins>
 
-		<finalName>communicatorservice</finalName>
+		<finalName>core.communicator</finalName>
 	</build>
 
 	<repositories>

@@ -17,24 +17,26 @@ package eu.trentorise.smartcampus.communicator.model;
 
 import java.io.Serializable;
 
-public class NotificationAuthor implements Serializable{
+public class NotificationAuthor implements Serializable {
 	private static final long serialVersionUID = -1045073082737340872L;
 
-	private Long socialId;
-	private String name;
-	
-	public Long getSocialId() {
-		return socialId;
+	private String appId;
+	private String userId;
+
+	public String getUserId() {
+		return userId;
 	}
-	public void setSocialId(Long socialId) {
-		this.socialId = socialId;
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
-	public String getName() {
-		return name;
+
+	public String getAppId() {
+		return appId;
 	}
-	public void setName(String name) {
-		this.name = name;
+
+	public void setAppId(String appId) {
+		this.appId = appId;
 	}
-	
-	
+
 }

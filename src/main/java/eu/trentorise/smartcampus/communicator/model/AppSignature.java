@@ -1,42 +1,46 @@
 package eu.trentorise.smartcampus.communicator.model;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 @XmlRootElement(name = "appsignature")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AppSignature {
+
+	private String appId;
 	
-	private String appName;
+	private Map<String,String> privateKey;
 	
-	private String senderId;
+	private Map<String,String> publicKey;
+
+
 	
-	private String apiKey;
 
-	public String getAppName() {
-		return appName;
+	public String getAppId() {
+		return appId;
 	}
 
-	public void setAppName(String appName) {
-		this.appName = appName;
+	public void setAppId(String appId) {
+		this.appId = appId;
 	}
 
-	public String getSenderId() {
-		return senderId;
+	public Map<String,String> getPublicKey() {
+		return publicKey;
 	}
 
-	public void setSenderId(String senderId) {
-		this.senderId = senderId;
+	public void setPublicKey(Map<String,String> publicKey) {
+		this.publicKey = publicKey;
 	}
 
-	public String getApiKey() {
-		return apiKey;
+	public Map<String,String> getPrivateKey() {
+		return privateKey;
 	}
 
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
+	public void setPrivateKey(Map<String,String> privateKey) {
+		this.privateKey = privateKey;
 	}
 
 }

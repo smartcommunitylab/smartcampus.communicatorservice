@@ -21,10 +21,7 @@ public class NotificationFilter implements Serializable {
 	private static final long serialVersionUID = 5704217339723155689L;
 
 	public enum ORDERING {
-		ORDER_BY_ARRIVAL, 
-		ORDER_BY_REL_TIME, 
-		ORDER_BY_REL_PLACE, 
-		ORDER_BY_PRIORITY;
+		ORDER_BY_ARRIVAL, ORDER_BY_REL_TIME, ORDER_BY_REL_PLACE, ORDER_BY_PRIORITY;
 	}
 
 	private Boolean starred = null;
@@ -33,9 +30,9 @@ public class NotificationFilter implements Serializable {
 	private String labelId;
 
 	private String searchText;
-	
+
 	private ORDERING ordering;
-	
+
 	public String getLabelId() {
 		return labelId;
 	}

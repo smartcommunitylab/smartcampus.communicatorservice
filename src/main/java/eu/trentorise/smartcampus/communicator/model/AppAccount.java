@@ -9,13 +9,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import eu.trentorise.smartcampus.communicatorservice.manager.Utils;
-
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AppAccount {
-	private String id;
-	private String appName;
+	private String id;	
+	private String appId;
 
 	@XmlElementWrapper
 	@XmlElement(name = "configuration")
@@ -28,14 +26,7 @@ public class AppAccount {
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public String getAppName() {
-		return appName;
-	}
-
-	public void setAppName(String appName) {
-		this.appName = appName;
-	}
+	
 
 	public List<Configuration> getConfigurations() {
 		return configurations;
@@ -49,22 +40,28 @@ public class AppAccount {
 		List<Configuration> list = getConfigurations();
 		List<CloudToPushType> result = new ArrayList<CloudToPushType>();
 		for (Configuration c : list) {
-			if (c.getType() != null)
-				result.add(c.getType());
+			if (c.getKey() != null)
+				result.add(c.getKey());
 		}
 		return result;
 	}
-	
-	public Configuration getGoogleConfigured() {
+
+	public Configuration getSpecificConfiguration(CloudToPushType conf) {
 		List<Configuration> list = getConfigurations();
 		Configuration result = null;
 		for (Configuration c : list) {
-			if (Utils.gcm_sender_id.compareTo(c.getName())==0)
-				result=c;
+			if (conf.compareTo(c.getKey()) == 0)
+				result = c;
 		}
 		return result;
 	}
-	
-	
+
+	public String getAppId() {
+		return appId;
+	}
+
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
 
 }

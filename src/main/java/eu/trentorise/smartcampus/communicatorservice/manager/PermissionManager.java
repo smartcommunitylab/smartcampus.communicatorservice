@@ -19,9 +19,10 @@ package eu.trentorise.smartcampus.communicatorservice.manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.trentorise.smartcampus.ac.provider.model.User;
+
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
-import eu.trentorise.smartcampus.exceptions.NotFoundException;
+import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
+import eu.trentorise.smartcampus.social.model.User;
 
 /**
  * <i>PermissionManager</i> checks the permissions about resources and storage
@@ -35,8 +36,8 @@ public class PermissionManager {
 	@Autowired
 	UserAccountManager accountManager;
 
-	//@Autowired
-	//MetadataManager metaManager;
+	// @Autowired
+	// MetadataManager metaManager;
 
 	/**
 	 * checks if a user can access to a storage account
@@ -83,9 +84,9 @@ public class PermissionManager {
 	 */
 	public boolean checkResourcePermission(User user, String rid)
 			throws NotFoundException {
-		//Metadata meta = metaManager.findByResource(rid);
-	//	return user.getId().equals(
-	//			accountManager.findById(meta.getUserAccountId()).getUserId());
+		// Metadata meta = metaManager.findByResource(rid);
+		// return user.getId().equals(
+		// accountManager.findById(meta.getUserAccountId()).getUserId());
 		return false;
 	}
 

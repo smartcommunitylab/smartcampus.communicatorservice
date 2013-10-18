@@ -14,13 +14,15 @@ import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
+import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
 import eu.trentorise.smartcampus.communicator.model.Configuration;
 import eu.trentorise.smartcampus.communicator.model.Notification;
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
-import eu.trentorise.smartcampus.exceptions.NotFoundException;
+import eu.trentorise.smartcampus.communicatorservice.exceptions.NoUserAccountGCM;
 import eu.trentorise.smartcampus.communicatorservice.manager.AppAccountManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.UserAccountManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.pushservice.PushServiceCloud;
+import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 
 @Component
 public class GoogleCloudMessengerManager implements PushServiceCloud {
@@ -58,12 +60,12 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 	 */
 	@Override
 	public boolean sendToCloud(Notification notification)
-			throws NotFoundException {
+			throws NotFoundException, NoUserAccountGCM {
 
 		// in default case is the system messenger that send
 		String senderId = null;
 		Sender sender = null;
-		String senderAppName = notification.getType();
+		String senderAppName = notification.getAuthor().getAppId();
 
 		AppAccount appAccount;
 		List<AppAccount> listApp = appAccountManager
@@ -72,13 +74,13 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		appAccount = listApp.get(0);
 
 		List<Configuration> listConfApp = appAccount.getConfigurations();
-		Iterator<Configuration> indexConf=listConfApp.iterator();
-		
-		while (indexConf.hasNext() && senderId==null) {
-			Configuration conf=indexConf.next();
-			if (gcm_sender_key.compareTo(conf.getName()) == 0) {
-				senderId = conf.getValue();
-			}else{
+		Iterator<Configuration> indexConf = listConfApp.iterator();
+
+		while (indexConf.hasNext() && senderId == null) {
+			Configuration conf = indexConf.next();
+			if (CloudToPushType.GOOGLE.compareTo(conf.getKey()) == 0 && conf.get(gcm_sender_id)!=null) {
+				senderId = conf.get(gcm_sender_id) ;
+			} else {
 				throw new NotFoundException();
 			}
 		}
@@ -88,26 +90,29 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		String devices = "";
 
 		List<UserAccount> listUserAccount = userAccountManager
-				.findByUserIdAndAppName(Long.valueOf(notification.getUser())
-						.longValue(), senderAppName);
+				.findByUserIdAndAppName(notification.getUser(), senderAppName);
 
-		UserAccount userAccountSelected = listUserAccount.get(0);
-		Configuration configurationSelected = new Configuration();
+		if (!listUserAccount.isEmpty() && sender!=null) {
 
-		List<Configuration> listConfUser = userAccountSelected.getConfigurations();
-		for (Configuration index : listConfUser) {
-			if (gcm_registration_id_default_key.compareTo(index.getName()) == 0) {
-				devices = index.getValue();
-				configurationSelected = index;
-			}
-		}
+			UserAccount userAccountSelected = listUserAccount.get(0);
+			Configuration configurationSelected = new Configuration();
 
-		Message message = new Message.Builder()
+			List<Configuration> listConfUser = userAccountSelected
+					.getConfigurations();
+			if(listConfUser!=null && !listConfUser.isEmpty()){
+				for (Configuration index : listConfUser) {
+					if (CloudToPushType.GOOGLE.compareTo(index.getKey()) == 0) {
+						devices = index.get(
+								gcm_registration_id_default_key);
+						configurationSelected = index;
+					}
+				}
+				Message message = new Message.Builder()
 				.collapseKey("1")
 				.timeToLive(3)
 				.delayWhileIdle(true)
-				.addData(notification.getTitle(), notification.getDescription())
-				.build();
+				.addData(notification.getTitle(),
+						notification.getDescription()).build();
 		Result result;
 		try {
 
@@ -119,7 +124,11 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 				String canonicalRegId = result.getCanonicalRegistrationId();
 				if (canonicalRegId != null) {
 					// update new registrationid in my database
-					configurationSelected.setValue(canonicalRegId);
+					configurationSelected.remove(
+							gcm_registration_id_default_key);
+					configurationSelected
+							.putPrivate(gcm_registration_id_default_key,
+									canonicalRegId);
 					userAccountManager.update(userAccountSelected);
 					return true;
 				} else {
@@ -131,15 +140,22 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 					// remove appconfigutaion on this user account
 					userAccountSelected.getConfigurations().remove(
 							configurationSelected);
-					userAccountManager.delete(userAccountSelected);
 					return false;
 				}
 			}
 
 		} catch (Exception e) {
-			logger.error(e.getMessage()+senderId);
+			logger.error(e.getMessage() + senderId);
 			e.printStackTrace();
 			return false;
+		}
+			}
+
+			
+		}else{
+			logger.warn("The user "+ notification.getUser() +" is not register for receive push notification");
+			return false;
+			//throw new NoUserAccountGCM("The user is not register for receive push notification");
 		}
 		return false;
 	}

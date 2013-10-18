@@ -18,16 +18,28 @@ package eu.trentorise.smartcampus.communicatorservice.manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import eu.trentorise.smartcampus.ac.provider.model.User;
+
+import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
+import eu.trentorise.smartcampus.social.model.User;
 
 public class Utils {
-	
+
 	@Autowired
 	@Value("${gcm.sender.id}")
 	public static String gcm_sender_id;
 
 	public static String userId(User user) {
-		return user.getId()+"";
-	} 
+		return user.getId() + "";
+	}
+
+	public static CloudToPushType checkCloudToPushType(String conf) {
+		String result = conf.toUpperCase();
+		for (CloudToPushType x : CloudToPushType.values()) {
+			if (x.name().compareTo(result) == 0) {
+				return x;
+			}
+		}
+		return CloudToPushType.GOOGLE;
+	}
 
 }

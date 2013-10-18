@@ -13,23 +13,30 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  ******************************************************************************/
-package eu.trentorise.smartcampus.communicatorservice.manager;
+package eu.trentorise.smartcampus.communicatorservice.exceptions;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+/**
+ * @author mirko perillo
+ * 
+ */
+public class NotFoundException extends Exception {
 
-import eu.trentorise.smartcampus.communicator.model.Notification;
-import eu.trentorise.smartcampus.communicatorservice.storage.CommunicatorStorage;
-import eu.trentorise.smartcampus.presentation.common.exception.DataException;
-import eu.trentorise.smartcampus.social.model.User;
+	private static final long serialVersionUID = -2988635674495224147L;
 
-@Component
-public class CommunicatorManager {
-
-	@Autowired
-	CommunicatorStorage storage;
-
-	public void deleteUser(User user) throws DataException {
-		storage.deleteObjectsPermanently(Notification.class, Utils.userId(user));
+	public NotFoundException() {
+		super();
 	}
+
+	public NotFoundException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public NotFoundException(String message) {
+		super(message);
+	}
+
+	public NotFoundException(Throwable cause) {
+		super(cause);
+	}
+
 }

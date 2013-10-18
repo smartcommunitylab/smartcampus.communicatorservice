@@ -16,17 +16,12 @@
 package eu.trentorise.smartcampus.communicatorservice.controller;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,15 +31,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import eu.trentorise.smartcampus.ac.provider.model.User;
 import eu.trentorise.smartcampus.communicator.model.Notification;
-import eu.trentorise.smartcampus.communicatorservice.filter.NotificationFilter;
+import eu.trentorise.smartcampus.communicator.model.Notifications;
+import eu.trentorise.smartcampus.communicatorservice.exceptions.SmartCampusException;
 import eu.trentorise.smartcampus.communicatorservice.manager.NotificationManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.PermissionManager;
-import eu.trentorise.smartcampus.controllers.SCController;
-import eu.trentorise.smartcampus.exceptions.SmartCampusException;
 import eu.trentorise.smartcampus.presentation.common.exception.DataException;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
+import eu.trentorise.smartcampus.resourceprovider.controller.SCController;
+import eu.trentorise.smartcampus.resourceprovider.model.AuthServices;
 
 @Controller
 public class NotificationController extends SCController {
@@ -55,157 +50,163 @@ public class NotificationController extends SCController {
 	@Autowired
 	PermissionManager permissionManager;
 
-	@RequestMapping(method = RequestMethod.GET, value = "/eu.trentorise.smartcampus.communicator.model.Notification")
+	@Autowired
+	private AuthServices services;
+
+	@Override
+	protected AuthServices getAuthServices() {
+		return services;
+	}
+
+
+	// Notification by app
+
+	@RequestMapping(method = RequestMethod.GET, value = "/app/{capp}/notification")
 	public @ResponseBody
-	List<Notification> getNotifications(HttpServletRequest request,
+	Notifications getNotificationsByApp(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session,
+			@RequestParam("since") Long since,
+			@RequestParam("position") Integer position,
+			@RequestParam("count") Integer count,
+			@PathVariable("capp") String capp) throws DataException,
+			IOException, SmartCampusException {
+
+		if (capp == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
+		}
+		String userId = getUserId();
+		if (userId == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		}
+		
+		Notifications result=new Notifications();
+		result.setNotifications(notificationManager
+				.get(userId, capp, since, position, count, null));
+
+		return result;
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/app/{capp}/notification/{id}")
+	public @ResponseBody
+	Notification getNotificationByApp(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session,
+			@PathVariable("id") String id, @PathVariable("capp") String capp)
+			throws DataException, IOException, NotFoundException,
+			SmartCampusException {
+
+		if (capp == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
+		}
+
+		return notificationManager.getByIdAndApp(id, capp);
+	}
+
+	@RequestMapping(method = RequestMethod.DELETE, value = "/app/{capp}/notification/{id}")
+	public @ResponseBody
+	boolean deleteByApp(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session,
+			@PathVariable("id") String id, @PathVariable("capp") String capp)
+			throws DataException, IOException, NotFoundException,
+			SmartCampusException {
+
+		String userId = getUserId();
+		if (userId == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		}
+
+		return notificationManager.deleteByApp(id, capp);
+	}
+
+	@RequestMapping(method = RequestMethod.PUT, value = "/app/{capp}/notification/{id}")
+	public @ResponseBody
+	void updateByApp(HttpServletRequest request, HttpServletResponse response,
+			HttpSession session, @PathVariable("id") String id,
+			@PathVariable("capp") String capp,
+			@RequestBody Notification notification) throws DataException,
+			IOException, NotFoundException, SmartCampusException {
+
+		String userId = getUserId();
+		if (userId == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		}
+
+		notificationManager.updateLabelsByApp(id, capp,
+				notification.getLabelIds());
+		notificationManager.starredByApp(id, capp, notification.isStarred());
+	}
+
+	// notification by user
+
+	@RequestMapping(method = RequestMethod.GET, value = "/user/notification")
+	public @ResponseBody
+	Notifications getNotificationsByUser(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
 			@RequestParam("since") Long since,
 			@RequestParam("position") Integer position,
 			@RequestParam("count") Integer count) throws DataException,
 			IOException, SmartCampusException {
 
-		User user = retrieveUser(request);
-		if (user == null) {
+		String userId = getUserId();
+		if (userId == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
+		
+		Notifications result=new Notifications();
+		result.setNotifications(notificationManager.get(userId, null, since, position, count,
+				null));
 
-		return notificationManager.get(user, since, position, count, null);
+		return result ;
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/eu.trentorise.smartcampus.communicator.model.Notification/{id}")
+	@RequestMapping(method = RequestMethod.GET, value = "/user/notification/{id}")
 	public @ResponseBody
-	Notification getNotification(HttpServletRequest request,
+	Notification getNotificationByUser(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
 			@PathVariable("id") String id) throws DataException, IOException,
 			NotFoundException, SmartCampusException {
 
-		User user = retrieveUser(request);
-		if (user == null) {
+		String userId = getUserId();
+		if (userId == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
 
-		return notificationManager.getById(id);
+		return notificationManager.getByIdAndUser(id, userId);
 	}
 
-	@RequestMapping(method = RequestMethod.DELETE, value = "/eu.trentorise.smartcampus.communicator.model.Notification/{id}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "user/notification/{id}")
 	public @ResponseBody
-	boolean delete(HttpServletRequest request, HttpServletResponse response,
-			HttpSession session, @PathVariable("id") String id)
-			throws DataException, IOException, NotFoundException,
-			SmartCampusException {
+	boolean deleteByUser(HttpServletRequest request,
+			HttpServletResponse response, HttpSession session,
+			@PathVariable("id") String id) throws DataException, IOException,
+			NotFoundException, SmartCampusException {
 
-		User user = retrieveUser(request);
-		if (user == null) {
+		String userId = getUserId();
+		if (userId == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 
-		return notificationManager.delete(id);
+		return notificationManager.deleteByUser(id, userId);
 	}
 
-	
-
-	@RequestMapping(method = RequestMethod.PUT, value = "/eu.trentorise.smartcampus.communicator.model.Notification/{id}")
+	@RequestMapping(method = RequestMethod.PUT, value = "user/notification/{id}")
 	public @ResponseBody
-	void update(HttpServletRequest request, HttpServletResponse response,
+	void updateByUser(HttpServletRequest request, HttpServletResponse response,
 			HttpSession session, @PathVariable("id") String id,
 			@RequestBody Notification notification) throws DataException,
 			IOException, NotFoundException, SmartCampusException {
 
-		User user = retrieveUser(request);
-		if (user == null) {
+		String userId = getUserId();
+		if (userId == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 
-		notificationManager.updateLabels(id, notification.getLabelIds());
-		notificationManager.starred(id, notification.isStarred());
+		notificationManager.updateLabelsByUser(id, userId,
+				notification.getLabelIds());
+		notificationManager.starredByUser(id, userId, notification.isStarred());
 	}
-
-	@RequestMapping(method = RequestMethod.GET, value = "/objects")
-	public @ResponseBody
-	Map<String, List<Notification>> filterNotifications(
-			HttpServletRequest request, HttpServletResponse response,
-			HttpSession session, @RequestParam("filter") String jsonFilter,
-			@RequestParam Long since, @RequestParam Integer position,
-			@RequestParam Integer count) throws IOException, DataException,
-			SmartCampusException {
-
-		NotificationFilter filter = null;
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			filter = mapper.readValue(jsonFilter, NotificationFilter.class);
-		} catch (JsonMappingException e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-		}
-
-		User user = retrieveUser(request);
-		if (user == null) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-			return null;
-		}
-		Map<String, List<Notification>> result = new HashMap<String, List<Notification>>();
-		List<Notification> notList = notificationManager.get(user, since,
-				position, count, filter);
-
-		result.put(Notification.class.getName(),
-				(notList == null) ? Collections.<Notification> emptyList()
-						: notList);
-		return result;
-	}
-
-	@RequestMapping(method = RequestMethod.POST, value = "/send/app/{appId}")
-	public @ResponseBody
-	void sendAppNotification(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session,
-			@RequestBody Notification notification,
-			@PathVariable("appId") String appId) throws DataException,
-			IOException, NotFoundException {
-
-		String usersParam = request.getParameter("users");
-		ObjectMapper mapper = new ObjectMapper();
-		@SuppressWarnings("unchecked")
-		List<String> users = mapper.readValue(usersParam, List.class);
-
-		notification.setType(appId);
-
-		for (String receiver : users) {
-			notification.setId(null);
-			notification.setUser(receiver);
-			notificationManager.create(notification);
-		}
-	}
-
-	/*@RequestMapping(method = RequestMethod.POST, value = "/send/user")
-	public @ResponseBody
-	void sendUserNotification(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session,
-			@RequestBody Notification notification) throws DataException,
-			IOException, NotFoundException, SmartCampusException {
-
-		User user = retrieveUser(request);
-		if (user == null) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		}
-
-		String usersParam = request.getParameter("users");
-		ObjectMapper mapper = new ObjectMapper();
-		@SuppressWarnings("unchecked")
-		List<String> users = mapper.readValue(usersParam, List.class);
-
-		NotificationAuthor author = new NotificationAuthor();
-		author.setSocialId(user.getSocialId());
-		notification.setAuthor(author);
-		notification.setType("user");
-
-		for (String receiver : users) {
-			notification.setId(null);
-			notification.setUser(receiver);
-			notificationManager.create(notification);
-		}
-
-	}
-
-	*/
 
 }

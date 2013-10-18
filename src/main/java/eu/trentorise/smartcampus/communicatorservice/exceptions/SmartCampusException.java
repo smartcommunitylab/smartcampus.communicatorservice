@@ -13,23 +13,27 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  ******************************************************************************/
-package eu.trentorise.smartcampus.communicatorservice.manager;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+package eu.trentorise.smartcampus.communicatorservice.exceptions;
 
-import eu.trentorise.smartcampus.communicator.model.Notification;
-import eu.trentorise.smartcampus.communicatorservice.storage.CommunicatorStorage;
-import eu.trentorise.smartcampus.presentation.common.exception.DataException;
-import eu.trentorise.smartcampus.social.model.User;
+public class SmartCampusException extends Exception {
 
-@Component
-public class CommunicatorManager {
+	private static final long serialVersionUID = 6126131306575744564L;
 
-	@Autowired
-	CommunicatorStorage storage;
-
-	public void deleteUser(User user) throws DataException {
-		storage.deleteObjectsPermanently(Notification.class, Utils.userId(user));
+	public SmartCampusException() {
+		super();
 	}
+
+	public SmartCampusException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public SmartCampusException(String message) {
+		super(message);
+	}
+
+	public SmartCampusException(Throwable cause) {
+		super(cause);
+	}
+
 }

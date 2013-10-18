@@ -19,7 +19,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 
-	<display-name>smartcampus.communicatorservice</display-name>
+	<display-name>smartcampus.communicator</display-name>
 
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
@@ -31,7 +31,8 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/spring/filterContext.xml</param-value>
+        <param-value>
+            /WEB-INF/spring/spring-security.xml</param-value>
     </context-param>
  
 
@@ -42,7 +43,7 @@
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>    
+    </filter-mapping>  
 
     <servlet>
         <servlet-name>SpringAppDispatcher</servlet-name>
@@ -54,10 +55,19 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-
+    
+     <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/img/*</url-pattern>
+        <url-pattern>/css/*</url-pattern>
+        <url-pattern>/lib/*</url-pattern>
+        <url-pattern>/js/*</url-pattern>
+        </servlet-mapping>
+        
+     
     <servlet-mapping>
         <servlet-name>SpringAppDispatcher</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 
 </web-app>
