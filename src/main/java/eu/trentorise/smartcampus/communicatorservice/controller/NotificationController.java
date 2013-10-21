@@ -16,13 +16,15 @@
 package eu.trentorise.smartcampus.communicatorservice.controller;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +40,9 @@ import eu.trentorise.smartcampus.communicatorservice.manager.NotificationManager
 import eu.trentorise.smartcampus.communicatorservice.manager.PermissionManager;
 import eu.trentorise.smartcampus.presentation.common.exception.DataException;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
+import eu.trentorise.smartcampus.presentation.common.util.Util;
+import eu.trentorise.smartcampus.presentation.data.SyncData;
+import eu.trentorise.smartcampus.presentation.data.SyncDataRequest;
 import eu.trentorise.smartcampus.resourceprovider.controller.SCController;
 import eu.trentorise.smartcampus.resourceprovider.model.AuthServices;
 
@@ -207,6 +212,30 @@ public class NotificationController extends SCController {
 		notificationManager.updateLabelsByUser(id, userId,
 				notification.getLabelIds());
 		notificationManager.starredByUser(id, userId, notification.isStarred());
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "user/notification/sync")
+	public @ResponseBody
+	ResponseEntity<SyncData> syncDataByUser(HttpServletRequest request, HttpServletResponse response, @RequestParam long since, @RequestBody Map<String,Object> obj) throws IOException, ClassNotFoundException, DataException  {
+		String userId = getUserId();
+		if (userId == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		}
+		SyncDataRequest syncReq = Util.convertRequest(obj, since);
+		SyncData out = notificationManager.synchronizeByUser(userId, syncReq.getSyncData());
+		return new ResponseEntity<SyncData>(out,HttpStatus.OK);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "app/{capp}/notification/sync")
+	public @ResponseBody
+	ResponseEntity<SyncData> syncDataByApp(@PathVariable("capp") String capp, HttpServletRequest request, HttpServletResponse response, @RequestParam long since, @RequestBody Map<String,Object> obj) throws IOException, ClassNotFoundException, DataException {
+		String userId = getUserId();
+		if (userId == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		}
+		SyncDataRequest syncReq = Util.convertRequest(obj, since);
+		SyncData out = notificationManager.synchronizeByApp(userId, capp, syncReq.getSyncData());
+		return new ResponseEntity<SyncData>(out,HttpStatus.OK);
 	}
 
 }

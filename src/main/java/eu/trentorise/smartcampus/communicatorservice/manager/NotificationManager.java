@@ -15,7 +15,9 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.communicatorservice.manager;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ import eu.trentorise.smartcampus.communicatorservice.manager.pushservice.impl.Go
 import eu.trentorise.smartcampus.communicatorservice.storage.CommunicatorStorage;
 import eu.trentorise.smartcampus.presentation.common.exception.DataException;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
+import eu.trentorise.smartcampus.presentation.data.SyncData;
 
 @Component
 public class NotificationManager {
@@ -251,6 +254,36 @@ public class NotificationManager {
 
 	public void deleteUserMessages(String userId) throws DataException {
 		storage.deleteObjectsPermanently(Notification.class, userId);
+	}
+
+	/**
+	 * @param userId
+	 * @param syncData
+	 * @return
+	 * @throws DataException 
+	 */
+	public SyncData synchronizeByUser(String userId, SyncData input) throws DataException {
+		Map<String,Object> exclude = new HashMap<String, Object>();
+		exclude.put("readed", true);
+		SyncData output = storage.getSyncData(input.getVersion(), userId, true, null, exclude);
+		storage.cleanSyncData(input, userId, null);
+		return output;
+	}
+
+	/**
+	 * @param userId
+	 * @param capp
+	 * @param syncData
+	 * @return
+	 */
+	public SyncData synchronizeByApp(String userId, String capp, SyncData input) throws DataException {
+		Map<String,Object> exclude = new HashMap<String, Object>();
+		Map<String,Object> include = new HashMap<String, Object>();
+		exclude.put("readed", true);
+		include.put("type", capp);
+		SyncData output = storage.getSyncData(input.getVersion(), userId, true, include, exclude);
+		storage.cleanSyncData(input, userId, capp);
+		return output;
 	}
 
 }

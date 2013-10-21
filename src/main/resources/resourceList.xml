@@ -30,7 +30,13 @@
 	<resourceMapping method="DELETE"
 		pathPattern="/notification/{idn}"
 		uri="communicator.msg.write" /> -->
-	<resourceMapping method="GET"
+  <resourceMapping method="POST"
+    pathPattern="/user/notification/sync"
+    uri="communicator.user.msg.write" />
+  <resourceMapping method="POST"
+    pathPattern="/app/{capp}/notification/sync"
+    uri="communicator.app.msg.write.{capp}" />
+  	<resourceMapping method="GET"
 		pathPattern="/app/{capp}/notification"
 		uri="communicator.app.msg.read.{capp}" />
 	<resourceMapping method="GET"
@@ -54,7 +60,7 @@
 	<resourceMapping method="DELETE"
 		pathPattern="/user/notification/{idn}"
 		uri="communicator.user.msg.write" />
-	<!--  <resourceMapping method="POST" pathPattern="/send/user"
+		<!--  <resourceMapping method="POST" pathPattern="/send/user"
 		uri="communicator.send.user" /> -->
 	<resourceMapping method="POST"
 		pathPattern="/send/app/{capp}" uri="communicator.send.app.{capp}" />

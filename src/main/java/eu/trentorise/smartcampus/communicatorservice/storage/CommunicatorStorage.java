@@ -28,6 +28,7 @@ import eu.trentorise.smartcampus.communicatorservice.filter.NotificationFilter;
 import eu.trentorise.smartcampus.presentation.common.exception.DataException;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 import eu.trentorise.smartcampus.presentation.data.BasicObject;
+import eu.trentorise.smartcampus.presentation.data.SyncData;
 import eu.trentorise.smartcampus.presentation.storage.sync.mongo.BasicObjectSyncMongoStorage;
 
 public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
@@ -155,6 +156,38 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 		if (x.isEmpty())
 			throw new NotFoundException();
 		return x.get(FIRST);
+	}
+
+	public void cleanSyncData(SyncData data, String user, String app) throws DataException {
+		if (data.getDeleted() != null) {
+			for (String key : data.getDeleted().keySet()) {
+				for (String id : data.getDeleted().get(key)) {
+					try {
+						checkObject(user, id, app);
+					} catch (NotFoundException e) {
+						continue;
+					}
+				}
+			}
+		}
+		if (data.getUpdated() != null) {
+			for (String key : data.getUpdated().keySet()) {
+				for (BasicObject o : data.getUpdated().get(key)) {
+					try {
+						checkObject(user, o.getId(), app);
+					} catch (Exception e) {
+						throw new DataException("Failed to sync data", e);
+					}
+				}
+			}
+		}
+		super.cleanSyncData(data, user);
+	}
+
+	private void checkObject(String user, String id, String app) throws NotFoundException, DataException {
+		Notification n = getObjectById(id, Notification.class);
+		if (!user.equals(n.getUser())) throw new SecurityException("wrong user: expected "+n.getUser()+" found " + user);
+		if (app != null && !app.equals(n.getType())) throw new SecurityException("wrong app: expected "+n.getType()+" found " + app);
 	}
 
 }
