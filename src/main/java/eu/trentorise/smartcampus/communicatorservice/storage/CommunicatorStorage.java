@@ -187,8 +187,10 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 	private void checkObject(String user, String id, String app, BasicObject o) throws NotFoundException, DataException {
 		Notification n = getObjectById(id, Notification.class);
 		if (!user.equals(n.getUser())) throw new SecurityException("wrong user: expected "+n.getUser()+" found " + user);
-		if (o != null && !o.getUser().equals(user)) throw new SecurityException("empty user");
 		if (app != null && !app.equals(n.getType())) throw new SecurityException("wrong app: expected "+n.getType()+" found " + app);
+		if (o != null) {
+			o.setUser(user);
+		}
 	}
 
 }
