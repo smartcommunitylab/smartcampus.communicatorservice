@@ -163,7 +163,7 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 			for (String key : data.getDeleted().keySet()) {
 				for (String id : data.getDeleted().get(key)) {
 					try {
-						checkObject(user, id, app);
+						checkObject(user, id, app, null);
 					} catch (NotFoundException e) {
 						continue;
 					}
@@ -174,7 +174,7 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 			for (String key : data.getUpdated().keySet()) {
 				for (BasicObject o : data.getUpdated().get(key)) {
 					try {
-						checkObject(user, o.getId(), app);
+						checkObject(user, o.getId(), app, o);
 					} catch (Exception e) {
 						throw new DataException("Failed to sync data", e);
 					}
@@ -184,9 +184,10 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 		super.cleanSyncData(data, user);
 	}
 
-	private void checkObject(String user, String id, String app) throws NotFoundException, DataException {
+	private void checkObject(String user, String id, String app, BasicObject o) throws NotFoundException, DataException {
 		Notification n = getObjectById(id, Notification.class);
 		if (!user.equals(n.getUser())) throw new SecurityException("wrong user: expected "+n.getUser()+" found " + user);
+		if (o != null && !o.getUser().equals(user)) throw new SecurityException("empty user");
 		if (app != null && !app.equals(n.getType())) throw new SecurityException("wrong app: expected "+n.getType()+" found " + app);
 	}
 
