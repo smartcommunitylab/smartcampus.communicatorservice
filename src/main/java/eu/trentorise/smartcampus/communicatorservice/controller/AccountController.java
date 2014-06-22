@@ -45,6 +45,7 @@ import eu.trentorise.smartcampus.communicator.model.NotificationAuthor;
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
 import eu.trentorise.smartcampus.communicator.model.UserSignature;
 import eu.trentorise.smartcampus.communicatorservice.exceptions.AlreadyExistException;
+import eu.trentorise.smartcampus.communicatorservice.exceptions.PushException;
 import eu.trentorise.smartcampus.communicatorservice.exceptions.SmartCampusException;
 import eu.trentorise.smartcampus.communicatorservice.manager.AppAccountManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.NotificationManager;
@@ -67,25 +68,10 @@ public class AccountController extends SCController {
 	AppAccountManager appAccountManager;
 
 	@Autowired
-	@Value("${gcm.sender.key}")
-	private String gcm_sender_key;
+	@Value("${gcm.registration.id.key}")
+	private String gcm_registration_id_key;
 
-	@Autowired
-	@Value("${gcm.sender.id}")
-	private String gcm_sender_id;
-
-	@Autowired
-	@Value("${gcm.registration.id.default.key}")
-	private String gcm_registration_id_default_key;
-
-	@Autowired
-	@Value("${gcm.registration.id.default.value}")
-	private String gcm_registration_id_default_value;
 	
-	@Autowired
-	@Value("${gcm.registration.appid.default.key}")
-	private String app_id;
-
 	@Autowired
 	private AuthServices services;
 
@@ -170,27 +156,23 @@ public class AccountController extends SCController {
 			userAccount = new UserAccount();
 			userAccount.setAppId(appid);
 			userAccount.setUserId(userId);
-			try {
-				userAccountManager.save(userAccount);
-			} catch (AlreadyExistException e1) {
-				throw new AlreadyExistException(e1);
-			}
+			userAccountManager.save(userAccount);
 		} else {
-
 			userAccount = listUser.get(0);
 		}
 
 		List<Configuration> listConf = new ArrayList<Configuration>();
 
 		// set value of sender/serverside user registration code
-		if (registrationId == null)
-			registrationId = gcm_registration_id_default_value;
+		if (registrationId == null) {
+			throw new IllegalArgumentException("Missing registration id.");
+		}
 		// if user is not registered?use ours?
 
 		// ask type of device
 
 		Map<String, String> listvalue = new HashMap<String, String>();
-		listvalue.put(gcm_registration_id_default_key, registrationId);
+		listvalue.put(gcm_registration_id_key, registrationId);
 
 		Configuration e = new Configuration(CloudToPushType.GOOGLE, listvalue);
 		listConf.add(e);
@@ -279,7 +261,7 @@ public class AccountController extends SCController {
 			@RequestParam(value = "users", required = true) String[] userIds,
 			@RequestBody Notification notification,
 			@PathVariable("appId") String appId) throws DataException,
-			IOException, NotFoundException {
+			IOException, NotFoundException, PushException {
 
 		NotificationAuthor author = new NotificationAuthor();
 		author.setAppId(appId);
@@ -300,7 +282,7 @@ public class AccountController extends SCController {
 			HttpServletResponse response, HttpSession session,
 			@RequestParam(value = "users", required = true) String[] userIds,
 			@RequestBody Notification notification) throws DataException,
-			IOException, NotFoundException {
+			IOException, NotFoundException, PushException {
 
 		String userId = getUserId();
 		NotificationAuthor author = new NotificationAuthor();

@@ -26,7 +26,8 @@ import org.springframework.stereotype.Component;
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
 import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
 import eu.trentorise.smartcampus.communicator.model.Notification;
-import eu.trentorise.smartcampus.communicatorservice.exceptions.NoUserAccountGCM;
+import eu.trentorise.smartcampus.communicatorservice.exceptions.NoUserAccount;
+import eu.trentorise.smartcampus.communicatorservice.exceptions.PushException;
 import eu.trentorise.smartcampus.communicatorservice.filter.NotificationFilter;
 import eu.trentorise.smartcampus.communicatorservice.manager.pushservice.PushServiceCloud;
 import eu.trentorise.smartcampus.communicatorservice.manager.pushservice.impl.ApplePushNotificationServiceManager;
@@ -54,8 +55,7 @@ public class NotificationManager {
 	@Autowired
 	ApplePushNotificationServiceManager appleManager;
 
-	public void create(Notification notification)
-			throws NotFoundException, DataException {
+	public void create(Notification notification) throws NotFoundException, DataException, PushException {
 		if (notification.getAuthor() == null)
 			throw new DataException("No Author in this notification");
 
@@ -101,9 +101,7 @@ public class NotificationManager {
 
 					try {
 						servicePush.sendToCloud(notification);
-					} catch (NotFoundException e) {
-						throw new NotFoundException(e);
-					} catch (NoUserAccountGCM e) {
+					} catch (NoUserAccount e) {
 						e.printStackTrace();
 					}
 				}
