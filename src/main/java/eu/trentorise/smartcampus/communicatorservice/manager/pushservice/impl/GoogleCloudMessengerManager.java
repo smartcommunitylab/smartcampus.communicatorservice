@@ -1,5 +1,6 @@
 package eu.trentorise.smartcampus.communicatorservice.manager.pushservice.impl;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -94,14 +95,24 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 						break;
 					}
 				}
-				Message message = new Message.Builder()
-				.collapseKey("1")
-				.timeToLive(3)
+				
+				Message.Builder message = new Message.Builder()
+				.collapseKey("")
+				.timeToLive(30)
 				.delayWhileIdle(true)
-				.addData(notification.getTitle(),
-						notification.getDescription()).build();
+				.addData("title",
+						notification.getTitle())
+				.addData("description",
+						notification.getDescription());
+				if (notification.getContent() != null) {
+					for (String key : notification.getContent().keySet()) {
+						if (notification.getContent().get(key) != null) {
+							message.addData("content."+key, notification.getContent().get(key).toString());
+						}
+					}
+				}
 				try {
-					sender.send(message, registrationId, 5);
+					sender.send(message.build(), Collections.singletonList(registrationId), 1);
 				} catch (Exception e) {
 					e.printStackTrace();
 					throw new PushException(e);
