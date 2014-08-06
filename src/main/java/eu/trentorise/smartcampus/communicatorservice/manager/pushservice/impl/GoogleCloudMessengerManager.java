@@ -4,6 +4,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig.Feature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -14,7 +18,6 @@ import com.google.android.gcm.server.Sender;
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
 import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
 import eu.trentorise.smartcampus.communicator.model.Configuration;
-import eu.trentorise.smartcampus.communicator.model.EntityObject;
 import eu.trentorise.smartcampus.communicator.model.Notification;
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
 import eu.trentorise.smartcampus.communicatorservice.exceptions.NoUserAccount;
@@ -24,9 +27,17 @@ import eu.trentorise.smartcampus.communicatorservice.manager.UserAccountManager;
 import eu.trentorise.smartcampus.communicatorservice.manager.pushservice.PushServiceCloud;
 import eu.trentorise.smartcampus.presentation.common.exception.NotFoundException;
 
+@SuppressWarnings("deprecation")
 @Component
 public class GoogleCloudMessengerManager implements PushServiceCloud {
 
+	Logger logger = LoggerFactory.getLogger(getClass());
+	
+	private static ObjectMapper mapper = new ObjectMapper();
+	static {
+		mapper.configure(Feature.WRITE_NULL_PROPERTIES, false);
+	}
+	
 	@Autowired
 	AppAccountManager appAccountManager;
 
@@ -113,10 +124,10 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 					}
 				}
 				if (notification.getEntities() != null && !notification.getEntities().isEmpty()) {
-					for (EntityObject eo : notification.getEntities()) {
-						message.addData("entity."+eo.getId(), eo.getId());
-						message.addData("entity."+eo.getId()+".title", eo.getTitle());
-						message.addData("entity."+eo.getId()+".type", eo.getType());
+					try {
+						message.addData("entities", mapper.writeValueAsString(notification.getEntities()));
+					} catch (Exception e) {
+						logger.warn("Failed to convert entities: "+e.getMessage());
 					}
 				}
 				try {
