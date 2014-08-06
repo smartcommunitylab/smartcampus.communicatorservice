@@ -110,7 +110,6 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 				
 				Message.Builder message = new Message.Builder()
 				.collapseKey("")
-				.timeToLive(30)
 				.delayWhileIdle(true)
 				.addData("title",
 						notification.getTitle())
