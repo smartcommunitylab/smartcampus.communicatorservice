@@ -14,6 +14,7 @@ import com.google.android.gcm.server.Sender;
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
 import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
 import eu.trentorise.smartcampus.communicator.model.Configuration;
+import eu.trentorise.smartcampus.communicator.model.EntityObject;
 import eu.trentorise.smartcampus.communicator.model.Notification;
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
 import eu.trentorise.smartcampus.communicatorservice.exceptions.NoUserAccount;
@@ -109,6 +110,13 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 						if (notification.getContent().get(key) != null) {
 							message.addData("content."+key, notification.getContent().get(key).toString());
 						}
+					}
+				}
+				if (notification.getEntities() != null && !notification.getEntities().isEmpty()) {
+					for (EntityObject eo : notification.getEntities()) {
+						message.addData("entity."+eo.getId(), eo.getId());
+						message.addData("entity."+eo.getId()+".title", eo.getTitle());
+						message.addData("entity."+eo.getId()+".type", eo.getType());
 					}
 				}
 				try {
