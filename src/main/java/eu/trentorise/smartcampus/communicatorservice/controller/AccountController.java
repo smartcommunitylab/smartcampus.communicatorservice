@@ -258,7 +258,7 @@ public class AccountController extends SCController {
 	public @ResponseBody
 	void sendAppNotification(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
-			@RequestParam(value = "users", required = true) String[] userIds,
+			@RequestParam(value = "users", required = false) String[] userIds,
 			@RequestBody Notification notification,
 			@PathVariable("appId") String appId) throws DataException,
 			IOException, NotFoundException, PushException {
@@ -268,6 +268,15 @@ public class AccountController extends SCController {
 
 		notification.setType(appId);
 		notification.setAuthor(author);
+		
+		if (userIds == null || userIds.length == 0) {
+			List<UserAccount> users = userAccountManager.findByAppName(appId);
+			List<String> usersIds = new ArrayList<String>();
+			for (UserAccount user: users) {
+				usersIds.add(user.getUserId());
+			}
+			userIds = usersIds.toArray(new String[usersIds.size()]);
+		}
 
 		for (String receiver : userIds) {
 			notification.setId(null);
