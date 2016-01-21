@@ -94,7 +94,7 @@ public class UserAccountManager {
 
 	public List<UserAccount> findUserAccounts(String appId) {
 		Criteria criteria = new Criteria();
-		criteria.and("appId").is(appId);
+		criteria = criteria.and("appId").is(appId);
 		return db.find(Query.query(criteria), UserAccount.class);
 	}
 
@@ -107,7 +107,7 @@ public class UserAccountManager {
 	 */
 	public List<UserAccount> findBy(long userid) {
 		Criteria criteria = new Criteria();
-		criteria.and("userId").is(userid);
+		criteria = criteria.and("userId").is(userid);
 		return db.find(Query.query(criteria), UserAccount.class);
 	}
 
@@ -122,8 +122,8 @@ public class UserAccountManager {
 	 */
 	public List<UserAccount> findByUserIdAndAppName(String userid, String appId) {
 		Criteria criteria = new Criteria();
-		criteria.and("userId").is(userid);
-		criteria.and("appId").is(appId);
+		criteria = criteria.and("userId").is(userid);
+		criteria = criteria.and("appId").is(appId);
 		return db.find(Query.query(criteria), UserAccount.class);
 	}
 
