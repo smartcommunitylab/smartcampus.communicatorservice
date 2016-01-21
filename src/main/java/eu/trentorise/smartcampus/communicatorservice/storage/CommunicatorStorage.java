@@ -133,11 +133,11 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 			Class<Notification> class1) throws NotFoundException {
 
 		Criteria criteria = new Criteria();
-		criteria.and("id").is(id);
+		criteria = criteria.and("id").is(id);
 		if (capp != null && capp.compareTo("") != 0) {
 			criteria.and("content.type").is(capp);
 		}
-		criteria.and("deleted").is(false);
+		criteria = criteria.and("deleted").is(false);
 		List<Notification> x = find(Query.query(criteria), Notification.class);
 		if (x.isEmpty())
 			throw new NotFoundException();
@@ -147,11 +147,11 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 	public Notification getObjectByIdAndUser(String id, String userId,
 			Class<Notification> class1) throws NotFoundException {
 		Criteria criteria = new Criteria();
-		criteria.and("id").is(id);
+		criteria = criteria.and("id").is(id);
 		if (userId != null && userId.compareTo("") != 0) {
 			criteria.and("content.user").is(userId);
 		}
-		criteria.and("deleted").is(false);
+		criteria = criteria.and("deleted").is(false);
 		List<Notification> x = find(Query.query(criteria), Notification.class);
 		if (x.isEmpty())
 			throw new NotFoundException();

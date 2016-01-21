@@ -94,7 +94,7 @@ public class UserAccountManager {
 
 	public List<UserAccount> findUserAccounts(String appId) {
 		Criteria criteria = new Criteria();
-		criteria.and("appId").is(appId);
+		criteria = criteria.and("appId").is(appId);
 		return db.find(Query.query(criteria), UserAccount.class);
 	}
 
@@ -107,7 +107,7 @@ public class UserAccountManager {
 	 */
 	public List<UserAccount> findBy(long userid) {
 		Criteria criteria = new Criteria();
-		criteria.and("userId").is(userid);
+		criteria = criteria.and("userId").is(userid);
 		return db.find(Query.query(criteria), UserAccount.class);
 	}
 
@@ -122,11 +122,26 @@ public class UserAccountManager {
 	 */
 	public List<UserAccount> findByUserIdAndAppName(String userid, String appId) {
 		Criteria criteria = new Criteria();
-		criteria.and("userId").is(userid);
-		criteria.and("appId").is(appId);
+		criteria = criteria.and("userId").is(userid);
+		criteria = criteria.and("appId").is(appId);
 		return db.find(Query.query(criteria), UserAccount.class);
 	}
 
+	/**
+	 * retrieves all the {@link UserAccount} for a given appId
+	 * 
+	 * @param uid
+	 *            id of the owner of user storage accounts
+	 * @param appName
+	 * 
+	 * @return a list of UserAccount of the given user id and appName
+	 */
+	public List<UserAccount> findByAppName(String appId) {
+		Criteria criteria = new Criteria();
+		criteria = criteria.and("appId").is(appId);
+		return db.find(Query.query(criteria), UserAccount.class);
+	}	
+	
 	/**
 	 * retrieves the {@link UserAccount} of given id
 	 * 

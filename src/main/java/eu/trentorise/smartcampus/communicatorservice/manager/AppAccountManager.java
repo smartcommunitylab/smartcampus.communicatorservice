@@ -55,21 +55,21 @@ public class AppAccountManager {
 
 	public void delete(String appAccountId) {
 		Criteria crit = new Criteria();
-		crit.and("id").is(appAccountId);
+		crit = crit.and("id").is(appAccountId);
 		Query query = Query.query(crit);
 		db.remove(query, AppAccount.class);
 	}
 
 	public List<AppAccount> getAppAccounts(String appId) {
 		Criteria crit = new Criteria();
-		crit.and("appId").is(appId);
+		crit = crit.and("appId").is(appId);
 		Query query = Query.query(crit);
 		return db.find(query, AppAccount.class);
 	}
 
 	public AppAccount getAppAccount(String appId) {
 		Criteria crit = new Criteria();
-		crit.and("appId").is(appId);
+		crit = crit.and("appId").is(appId);
 		Query query = Query.query(crit);
 		List<AppAccount> x = db.find(query, AppAccount.class);
 		if (x.isEmpty())
