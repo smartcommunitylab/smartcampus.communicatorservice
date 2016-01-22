@@ -255,33 +255,26 @@ public class AccountController extends SCController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/send/app/{appId:.*}")
-	public @ResponseBody
-	void sendAppNotification(HttpServletRequest request,
-			HttpServletResponse response, HttpSession session,
-			@RequestParam(value = "users", required = false) String[] userIds,
-			@RequestBody Notification notification,
-			@PathVariable("appId") String appId) throws DataException,
-			IOException, NotFoundException, PushException {
+	public @ResponseBody void sendAppNotification(HttpServletRequest request, HttpServletResponse response, HttpSession session, @RequestParam(value = "users", required = false) String[] userIds,
+			@RequestBody Notification notification, @PathVariable("appId") String appId) throws DataException, IOException, NotFoundException, PushException {
 
 		NotificationAuthor author = new NotificationAuthor();
 		author.setAppId(appId);
 
 		notification.setType(appId);
 		notification.setAuthor(author);
-		
-		if (userIds == null || userIds.length == 0) {
-			List<UserAccount> users = userAccountManager.findByAppName(appId);
-			List<String> usersIds = new ArrayList<String>();
-			for (UserAccount user: users) {
-				usersIds.add(user.getUserId());
-			}
-			userIds = usersIds.toArray(new String[usersIds.size()]);
-		}
 
-		for (String receiver : userIds) {
+		if (userIds == null || userIds.length == 0) {
 			notification.setId(null);
-			notification.setUser(receiver);
+			notification.setUser(null);
+			notification.addChannelId(appId);
 			notificationManager.create(notification);
+		} else {
+			for (String receiver : userIds) {
+				notification.setId(null);
+				notification.setUser(receiver);
+				notificationManager.create(notification);
+			}
 		}
 	}
 
