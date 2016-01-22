@@ -66,7 +66,7 @@ public class NotificationController extends SCController {
 
 	// Notification by app
 
-	@RequestMapping(method = RequestMethod.GET, value = "/app/{capp}/notification")
+	@RequestMapping(method = RequestMethod.GET, value = "/app/notification/{capp:.*}")
 	public @ResponseBody
 	Notifications getNotificationsByApp(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
@@ -80,19 +80,15 @@ public class NotificationController extends SCController {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
-		String userId = getUserId();
-		if (userId == null) {
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-		}
 		
-		Notifications result=new Notifications();
+		Notifications result = new Notifications();
 		result.setNotifications(notificationManager
-				.get(userId, capp, since, position, count, null));
+				.get(null, capp, since, position, count, null));
 
 		return result;
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/app/{capp}/notification/{id}")
+	@RequestMapping(method = RequestMethod.GET, value = "/app/{capp:.*}/notification/{id}")
 	public @ResponseBody
 	Notification getNotificationByApp(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
@@ -108,7 +104,7 @@ public class NotificationController extends SCController {
 		return notificationManager.getByIdAndApp(id, capp);
 	}
 
-	@RequestMapping(method = RequestMethod.DELETE, value = "/app/{capp}/notification/{id}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/app/{capp:.*}/notification/{id}")
 	public @ResponseBody
 	boolean deleteByApp(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
@@ -124,7 +120,7 @@ public class NotificationController extends SCController {
 		return notificationManager.deleteByApp(id, capp);
 	}
 
-	@RequestMapping(method = RequestMethod.PUT, value = "/app/{capp}/notification/{id}")
+	@RequestMapping(method = RequestMethod.PUT, value = "/app/{capp:.*}/notification/{id}")
 	public @ResponseBody
 	void updateByApp(HttpServletRequest request, HttpServletResponse response,
 			HttpSession session, @PathVariable("id") String id,
