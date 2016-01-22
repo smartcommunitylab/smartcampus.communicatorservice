@@ -89,31 +89,31 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 		// user is obligatory
 		// criteria.and("user").is(user);
 		// only non-deleted
-		criteria.and("deleted").is(false);
+		criteria = criteria.and("deleted").is(false);
 
 		if (capp != null && capp.compareTo("") != 0) {
-			criteria.and("content.type").is(capp);
+			criteria = criteria.and("content.type").is(capp);
 		}
-		if (user != null && user.compareTo("") != 0) {
-			criteria.and("content.user").is(user);
-		}
+//		if (user != null && user.compareTo("") != 0) {
+		criteria = criteria.and("content.user").is(user);
+//		}
 		if (since != null) {
-			criteria.and("content.timestamp").gte(since);
+			criteria = criteria.and("content.timestamp").gte(since);
 		}
 		if (filter.isReaded() != null) {
-			criteria.and("content.readed").is(filter.isReaded());
+			criteria = criteria.and("content.readed").is(filter.isReaded());
 		}
 		if (filter.isStarred() != null) {
-			criteria.and("content.starred").is(filter.isStarred());
+			criteria = criteria.and("content.starred").is(filter.isStarred());
 		}
 		if (filter.getSourceType() != null) {
-			criteria.and("content.type").is(filter.getSourceType());
+			criteria = criteria.and("content.type").is(filter.getSourceType());
 		}
 		if (filter.getLabelId() != null) {
-			criteria.and("content.labelIds").is(filter.getLabelId());
+			criteria = criteria.and("content.labelIds").is(filter.getLabelId());
 		}
 		if (filter.getSearchText() != null) {
-			criteria.orOperator(
+			criteria = criteria.orOperator(
 					new Criteria().and("content.title").regex(
 							filter.getSearchText(), "i"),
 					new Criteria().and("content.description").regex(
