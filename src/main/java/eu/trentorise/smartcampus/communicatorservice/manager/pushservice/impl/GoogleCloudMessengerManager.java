@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
+import com.google.android.gcm.server.Message.Priority;
 import com.google.android.gcm.server.Sender;
 
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
@@ -128,6 +129,12 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 						logger.warn("Failed to convert entities: " + e.getMessage());
 					}
 				}
+				
+				message.priority(Priority.HIGH);
+				com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
+				builder.title(notification.getTitle()).body(notification.getDescription());
+				message.notification(builder.build());
+				
 				try {
 					sender.send(message.build(), Collections.singletonList(registrationId), 1);
 				} catch (Exception e) {
@@ -182,6 +189,12 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 					logger.warn("Failed to convert entities: " + e.getMessage());
 				}
 			}
+			
+			message.priority(Priority.HIGH);
+			com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
+			builder.title(notification.getTitle()).body(notification.getDescription());
+			message.notification(builder.build());
+			
 			try {
 				sender.send(message.build(), Constants.TOPIC_PREFIX + topic, 1);
 			} catch (Exception e) {
