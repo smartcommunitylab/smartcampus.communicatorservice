@@ -21,7 +21,7 @@
   <http xmlns="http://www.springframework.org/schema/security" pattern="/lib/**" security="none"/>
   <http xmlns="http://www.springframework.org/schema/security" pattern="/conf/**" security="none"/>
 	
-  <http xmlns="http://www.springframework.org/schema/security" pattern="/app/notification/**" security="none"/>	
+  <http xmlns="http://www.springframework.org/schema/security" pattern="/app/public/**" security="none"/>	
 	
 <!-- 	<http create-session="never" entry-point-ref="oauthAuthenticationEntryPoint"
 		xmlns="http://www.springframework.org/schema/security"

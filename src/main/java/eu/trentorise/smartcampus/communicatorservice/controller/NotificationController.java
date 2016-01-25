@@ -66,7 +66,22 @@ public class NotificationController extends SCController {
 
 	// Notification by app
 
-	@RequestMapping(method = RequestMethod.GET, value = "/app/notification/{capp:.*}")
+	@RequestMapping(method = RequestMethod.GET, value = "/app/public/notification/{capp:.*}")
+	public @ResponseBody Notifications getPublicNotificationsByApp(HttpServletRequest request, HttpServletResponse response, HttpSession session, @RequestParam("since") Long since,
+			@RequestParam("position") Integer position, @RequestParam("count") Integer count, @PathVariable("capp") String capp) throws DataException, IOException, SmartCampusException {
+
+		if (capp == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
+		}
+
+		Notifications result = new Notifications();
+		result.setNotifications(notificationManager.get(null, capp, since, position, count, null));
+
+		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/app/{capp:.*}/notification")
 	public @ResponseBody
 	Notifications getNotificationsByApp(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
@@ -80,10 +95,14 @@ public class NotificationController extends SCController {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
+		String userId = getUserId();
+		if (userId == null) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		}
 		
-		Notifications result = new Notifications();
+		Notifications result=new Notifications();
 		result.setNotifications(notificationManager
-				.get(null, capp, since, position, count, null));
+				.get(userId, capp, since, position, count, null));
 
 		return result;
 	}
