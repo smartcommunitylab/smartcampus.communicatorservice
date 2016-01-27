@@ -75,8 +75,7 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 		} else {
 			Collections.sort(list, arrivalDateComparator);
 		}
-		if (position != null && count != null && position > 0 && count > 0
-				&& list.size() > position) {
+		if (position != null && count != null && count > 0 && list.size() > position) {
 			return list.subList(position,
 					Math.min(list.size(), position + count));
 		}
