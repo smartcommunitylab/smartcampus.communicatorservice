@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.communicatorservice.storage;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -75,7 +76,10 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 		} else {
 			Collections.sort(list, arrivalDateComparator);
 		}
-		if (position != null && count != null && count > 0 && list.size() > position) {
+		if (list.size() <= position) {
+			return new ArrayList<Notification>();
+		}
+		if (position != null && count != null && count > 0 ) {
 			return list.subList(position,
 					Math.min(list.size(), position + count));
 		}
