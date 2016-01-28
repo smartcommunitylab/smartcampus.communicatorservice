@@ -117,6 +117,9 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 				Message.Builder message = new Message.Builder().collapseKey("").delayWhileIdle(true).addData("title", notification.getTitle()).addData("description", notification.getDescription());
 				if (notification.getContent() != null) {
 					for (String key : notification.getContent().keySet()) {
+						if (key.startsWith("_")) {
+							continue;
+						}						
 						if (notification.getContent().get(key) != null) {
 							message.addData("content." + key, notification.getContent().get(key).toString());
 						}
@@ -177,6 +180,9 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 			Message.Builder message = new Message.Builder().collapseKey("").delayWhileIdle(true).addData("title", notification.getTitle()).addData("description", notification.getDescription());
 			if (notification.getContent() != null) {
 				for (String key : notification.getContent().keySet()) {
+					if (key.startsWith("_")) {
+						continue;
+					}
 					if (notification.getContent().get(key) != null) {
 						message.addData("content." + key, notification.getContent().get(key).toString());
 					}
