@@ -54,14 +54,11 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 						.is(cls.getCanonicalName())), getObjectClass());
 	}
 
-	public List<Notification> searchNotifications(String user, String capp,
-			Long since, Integer position, Integer count,
-			NotificationFilter infilter) {
-		NotificationFilter filter = infilter == null ? new NotificationFilter()
-				: infilter;
-		List<Notification> list = find(
-				Query.query(createNotificationSearchWithTypeCriteria(user,
-						capp, since, filter)), Notification.class);
+	public List<Notification> searchNotifications(String user, String capp, Long since, Integer position, Integer count, NotificationFilter infilter) {
+		NotificationFilter filter = infilter == null ? new NotificationFilter() : infilter;
+		Criteria criteria = createNotificationSearchWithTypeCriteria(user, capp, since, filter);
+		List<Notification> list = find(Query.query(criteria), Notification.class);
+		
 		if (filter.getOrdering() != null) {
 			switch (filter.getOrdering()) {
 			case ORDER_BY_ARRIVAL:
@@ -79,9 +76,8 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 		if (list.size() <= position) {
 			return new ArrayList<Notification>();
 		}
-		if (position != null && count != null && count > 0 ) {
-			return list.subList(position,
-					Math.min(list.size(), position + count));
+		if (position != null && count != null && count > 0) {
+			return list.subList(position, Math.min(list.size(), position + count));
 		}
 		return list;
 	}
@@ -128,7 +124,7 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 	private Comparator<Notification> arrivalDateComparator = new Comparator<Notification>() {
 		@Override
 		public int compare(Notification o1, Notification o2) {
-			return (int) (o1.getTimestamp() - o2.getTimestamp());
+			return (int) (o2.getTimestamp() - o1.getTimestamp());
 		}
 	};
 
