@@ -102,7 +102,7 @@ public class NotificationManager {
 					try {
 						servicePush.sendToCloud(notification);
 					} catch (NoUserAccount e) {
-						e.printStackTrace();
+//						e.printStackTrace();
 					}
 				}
 			}else{

@@ -147,7 +147,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 			}
 
 		} else {
-			throw new NoUserAccount("The user is not register for receive push notification");
+			throw new NoUserAccount("The user "+notification.getUser()+" is not register for receive push notification");
 		}
 	}
 
