@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Order;
 import org.springframework.data.mongodb.core.query.Query;
 
 import eu.trentorise.smartcampus.communicator.model.Notification;
@@ -57,28 +58,33 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 	public List<Notification> searchNotifications(String user, String capp, Long since, Integer position, Integer count, NotificationFilter infilter) {
 		NotificationFilter filter = infilter == null ? new NotificationFilter() : infilter;
 		Criteria criteria = createNotificationSearchWithTypeCriteria(user, capp, since, filter);
-		List<Notification> list = find(Query.query(criteria), Notification.class);
+		Query q = Query.query(criteria);
+		q.sort().on("timestamp", Order.DESCENDING);
+		q.skip(position);
+		q.limit(count);
 		
-		if (filter.getOrdering() != null) {
-			switch (filter.getOrdering()) {
-			case ORDER_BY_ARRIVAL:
-				Collections.sort(list, arrivalDateComparator);
-				break;
-			case ORDER_BY_REL_PLACE:
-			case ORDER_BY_REL_TIME:
-			case ORDER_BY_PRIORITY:
-			default:
-				break;
-			}
-		} else {
-			Collections.sort(list, arrivalDateComparator);
-		}
-		if (list.size() <= position) {
-			return new ArrayList<Notification>();
-		}
-		if (position != null && count != null && count > 0) {
-			return list.subList(position, Math.min(list.size(), position + count));
-		}
+		List<Notification> list = find(q, Notification.class);
+		
+//		if (filter.getOrdering() != null) {
+//			switch (filter.getOrdering()) {
+//			case ORDER_BY_ARRIVAL:
+//				Collections.sort(list, arrivalDateComparator);
+//				break;
+//			case ORDER_BY_REL_PLACE:
+//			case ORDER_BY_REL_TIME:
+//			case ORDER_BY_PRIORITY:
+//			default:
+//				break;
+//			}
+//		} else {
+//			Collections.sort(list, arrivalDateComparator);
+//		}
+//		if (list.size() <= position) {
+//			return new ArrayList<Notification>();
+//		}
+//		if (position != null && count != null && count > 0) {
+//			return list.subList(position, Math.min(list.size(), position + count));
+//		}
 		return list;
 	}
 
