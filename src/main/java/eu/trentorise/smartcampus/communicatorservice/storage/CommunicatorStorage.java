@@ -15,8 +15,6 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.communicatorservice.storage;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -59,7 +57,7 @@ public class CommunicatorStorage extends BasicObjectSyncMongoStorage {
 		NotificationFilter filter = infilter == null ? new NotificationFilter() : infilter;
 		Criteria criteria = createNotificationSearchWithTypeCriteria(user, capp, since, filter);
 		Query q = Query.query(criteria);
-		q.sort().on("timestamp", Order.DESCENDING);
+		q.sort().on("content.timestamp", Order.DESCENDING);
 		q.skip(position);
 		q.limit(count);
 		
