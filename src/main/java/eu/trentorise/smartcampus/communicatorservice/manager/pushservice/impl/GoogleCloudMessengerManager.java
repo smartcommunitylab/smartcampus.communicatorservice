@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Message.Priority;
+import com.google.android.gcm.server.MulticastResult;
+import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
@@ -139,7 +141,8 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 				message.notification(builder.build());
 				
 				try {
-					sender.send(message.build(), Collections.singletonList(registrationId), 1);
+					MulticastResult result = sender.send(message.build(), Collections.singletonList(registrationId), 1);
+//					System.out.println(result);
 				} catch (Exception e) {
 					e.printStackTrace();
 					throw new PushException(e);
@@ -202,7 +205,8 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 			message.notification(builder.build());
 			
 			try {
-				sender.send(message.build(), Constants.TOPIC_PREFIX + topic, 1);
+				Result result = sender.send(message.build(), Constants.TOPIC_PREFIX + topic, 1);
+//				System.out.println(result);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new PushException(e);

@@ -278,7 +278,7 @@ public class AccountController extends SCController {
 		}
 	}
 
-	//@RequestMapping(method = RequestMethod.POST, value = "/send/user")
+	@RequestMapping(method = RequestMethod.POST, value = "/send/user")
 	public @ResponseBody
 	void sendUserNotification(HttpServletRequest request,
 			HttpServletResponse response, HttpSession session,
@@ -287,14 +287,15 @@ public class AccountController extends SCController {
 			IOException, NotFoundException, PushException {
 
 		String userId = getUserId();
-		NotificationAuthor author = new NotificationAuthor();
-		author.setUserId(userId);
+//		NotificationAuthor author = new NotificationAuthor();
+//		author.setUserId(userId);
 
 		notification.setType(userId);
 
 		for (String receiver : userIds) {
 			notification.setId(null);
 			notification.setUser(receiver);
+//			notification.setAuthor(author);
 			notificationManager.create(notification);
 		}
 	}
