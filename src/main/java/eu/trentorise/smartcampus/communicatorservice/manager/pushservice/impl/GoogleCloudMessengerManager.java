@@ -1,6 +1,6 @@
 package eu.trentorise.smartcampus.communicatorservice.manager.pushservice.impl;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Message.Priority;
-import com.google.android.gcm.server.MulticastResult;
-import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
@@ -109,13 +107,6 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 
 			List<Configuration> listConfUser = userAccountSelected.getConfigurations();
 			if (listConfUser != null && !listConfUser.isEmpty()) {
-				for (Configuration index : listConfUser) {
-					if (CloudToPushType.GOOGLE.compareTo(index.getKey()) == 0) {
-						registrationId = index.get(gcm_registration_id_key);
-						break;
-					}
-				}
-
 				Message.Builder message = new Message.Builder().collapseKey("").delayWhileIdle(true).addData("title", notification.getTitle()).addData("description", notification.getDescription());
 				if (notification.getContent() != null) {
 					for (String key : notification.getContent().keySet()) {
@@ -140,9 +131,20 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 				builder.title(notification.getTitle()).body(notification.getDescription());
 				message.notification(builder.build());
 				
+
+				List<String> regIds = new ArrayList<String>();
+				for (Configuration index : listConfUser) {
+					if (CloudToPushType.GOOGLE.compareTo(index.getKey()) == 0) {
+						registrationId = index.get(gcm_registration_id_key);
+						if (registrationId != null) {
+							regIds.add(registrationId);
+						}
+					}
+				}
+
+
 				try {
-					MulticastResult result = sender.send(message.build(), Collections.singletonList(registrationId), 1);
-//					System.out.println(result);
+					sender.send(message.build(), regIds, 1);
 				} catch (Exception e) {
 					e.printStackTrace();
 					throw new PushException(e);
@@ -205,8 +207,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 			message.notification(builder.build());
 			
 			try {
-				Result result = sender.send(message.build(), Constants.TOPIC_PREFIX + topic, 1);
-//				System.out.println(result);
+				sender.send(message.build(), Constants.TOPIC_PREFIX + topic, 1);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new PushException(e);

@@ -14,6 +14,22 @@
  *    limitations under the License.
  */
 
+/**
+ *    Copyright 2012-2013 Trento RISE
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package eu.trentorise.smartcampus.communicatorservice.controller;
 
 import java.io.IOException;
@@ -144,9 +160,12 @@ public class AccountController extends SCController {
 		UserAccount userAccount;
 		String userId = getUserId();
 
-		// String registrationId = request.getHeader(REGISTRATIONID_HEADER);
-
 		String registrationId = signature.getRegistrationId();
+		// set value of sender/serverside user registration code
+		if (registrationId == null) {
+			throw new IllegalArgumentException("Missing registration id.");
+		}
+
 		String appName = signature.getAppName();
 
 		List<UserAccount> listUser = userAccountManager.findByUserIdAndAppName(
@@ -161,40 +180,29 @@ public class AccountController extends SCController {
 			userAccount = listUser.get(0);
 		}
 
-		List<Configuration> listConf = new ArrayList<Configuration>();
-
-		// set value of sender/serverside user registration code
-		if (registrationId == null) {
-			throw new IllegalArgumentException("Missing registration id.");
+		List<Configuration> listConf = userAccount.getConfigurations();
+		if (listConf == null) {
+			listConf = new ArrayList<Configuration>();
 		}
-		// if user is not registered?use ours?
+		boolean exists = false;
+		for (Configuration c : listConf) {
+			if (registrationId.equals(c.get(gcm_registration_id_key))) {
+				exists = true; 
+				break;
+			}
+		}
 
-		// ask type of device
+		// TODO ask type of device
+		if (!exists) {
+			Map<String, String> listvalue = new HashMap<String, String>();
+			listvalue.put(gcm_registration_id_key, registrationId);
 
-		Map<String, String> listvalue = new HashMap<String, String>();
-		listvalue.put(gcm_registration_id_key, registrationId);
+			Configuration e = new Configuration(CloudToPushType.GOOGLE, listvalue);
+			listConf.add(e);
 
-		Configuration e = new Configuration(CloudToPushType.GOOGLE, listvalue);
-		listConf.add(e);
-
-		userAccount.setConfigurations(listConf);
-		userAccountManager.update(userAccount);
-
-//		Notification not = new Notification();
-//		not.setDescription("Sei Registrato alle notifiche push");
-//		not.setTitle("Sei Registrato alle notifiche push");
-//		not.setType(appName);
-//		not.setUser(String.valueOf(userAccount.getUserId()));
-//		not.setId(null);
-//		NotificationAuthor notAuth = new NotificationAuthor();
-//		notAuth.setAppId(appid);
-//		not.setAuthor(notAuth);
-//
-//		try {
-//			notificationManager.create(not);
-//		} catch (NotFoundException e1) {
-//			e1.printStackTrace();
-//		}
+			userAccount.setConfigurations(listConf);
+			userAccountManager.update(userAccount);
+		}
 
 		return true;
 
