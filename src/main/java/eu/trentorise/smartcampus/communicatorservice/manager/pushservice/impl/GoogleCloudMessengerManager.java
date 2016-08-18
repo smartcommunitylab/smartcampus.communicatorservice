@@ -126,6 +126,10 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 					}
 				}
 				
+				message.addData("content-available", "1");
+				message.addData("body", notification.getDescription());
+				message.addData("title", notification.getTitle());
+				
 				message.priority(Priority.HIGH);
 				com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
 				builder.title(notification.getTitle()).body(notification.getDescription());
