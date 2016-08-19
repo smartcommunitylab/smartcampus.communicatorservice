@@ -131,9 +131,9 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 				message.addData("title", notification.getTitle());
 				
 				message.priority(Priority.HIGH);
-				com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
-				builder.title(notification.getTitle()).body(notification.getDescription());
-				message.notification(builder.build());
+//				com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
+//				builder.title(notification.getTitle()).body(notification.getDescription());
+//				message.notification(builder.build());
 				
 
 				List<String> regIds = new ArrayList<String>();
