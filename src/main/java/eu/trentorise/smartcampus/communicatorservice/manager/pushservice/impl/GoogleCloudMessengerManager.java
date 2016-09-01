@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Message.Priority;
+import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
@@ -215,7 +216,8 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 //			message.notification(builder.build());
 			
 			try {
-				sender.send(message.build(), Constants.TOPIC_PREFIX + topic, 1);
+				Result sendresult = sender.send(message.build(), Constants.TOPIC_PREFIX + topic, 1);
+				System.err.println(sendresult);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new PushException(e);
