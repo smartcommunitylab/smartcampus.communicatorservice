@@ -167,6 +167,10 @@ public class AccountController extends SCController {
 			NotFoundException, SmartCampusException, AlreadyExistException {
 
 		String userId = user;
+		String tokenUserId = getUserId();
+		if (tokenUserId != null && ! tokenUserId.equals(userId)) {
+			throw new IllegalArgumentException("Cannot register arbitrary user within a user flow.");				
+		}
 
 		return registerUser(appid, signature, userId);
 
@@ -241,6 +245,10 @@ public class AccountController extends SCController {
 			SmartCampusException, AlreadyExistException {
 
 		String userId = user;
+		String tokenUserId = getUserId();
+		if (tokenUserId != null && ! tokenUserId.equals(userId)) {
+			throw new IllegalArgumentException("Cannot register arbitrary user within a user flow.");				
+		}
 		return unregisterUser(appid, userId);
 
 	}
