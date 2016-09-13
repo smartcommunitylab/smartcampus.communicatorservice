@@ -74,11 +74,15 @@
 		pathPattern="/configuration/user/{capp}" uri="communicator.register.user.{capp}" />	
 	<resourceMapping method="GET"
 		pathPattern="/configuration/public/{capp}" uri="communicator.register.user.{capp}" />	
-	<resourceMapping method="DELETE"
-		pathPattern="/unregister/user/{capp}" uri="communicator.register.user.{capp}" />
 	<resourceMapping method="POST"
 		pathPattern="/register/user/{capp}" uri="communicator.register.user.{capp}" />
-
+  <resourceMapping method="DELETE"
+    pathPattern="/unregister/user/{capp}" uri="communicator.register.user.{capp}" />
+  <resourceMapping method="POST"
+    pathPattern="/register/appuser/{capp}/{user}" uri="communicator.register.user.{capp}" />
+  <resourceMapping method="DELETE"
+    pathPattern="/unregister/appuser/{capp}/{user}" uri="communicator.register.user.{capp}" />
+  	
 
 </service>
 

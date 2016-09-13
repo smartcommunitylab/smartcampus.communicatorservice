@@ -42,6 +42,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -101,8 +103,6 @@ public class AccountController extends SCController {
 	    return "registration";
 	  }
 
-	// TODO appName or id required
-	// TODO client flow
 	@RequestMapping(method = RequestMethod.POST, value = "/register/app/{appid:.*}")
 	public @ResponseBody
 	boolean registerApp(HttpServletRequest request,
@@ -148,8 +148,6 @@ public class AccountController extends SCController {
 
 	}
 
-	// TODO appName or id required
-	// TODO client flow, userid required as input
 	@RequestMapping(method = RequestMethod.POST, value = "/register/user/{appid:.*}")
 	public @ResponseBody
 	boolean registerUserToPush(HttpServletRequest request,
@@ -157,9 +155,27 @@ public class AccountController extends SCController {
 			HttpSession session) throws DataException, IOException,
 			NotFoundException, SmartCampusException, AlreadyExistException {
 
-		UserAccount userAccount;
 		String userId = getUserId();
+		return registerUser(appid, signature, userId);
 
+	}
+	@RequestMapping(method = RequestMethod.POST, value = "/register/appuser/{appid}/{user}")
+	public @ResponseBody
+	boolean registerAppUserToPush(HttpServletRequest request,
+			@PathVariable String appid, @PathVariable String user, @RequestBody UserSignature signature,
+			HttpSession session) throws DataException, IOException,
+			NotFoundException, SmartCampusException, AlreadyExistException {
+
+		String userId = user;
+
+		return registerUser(appid, signature, userId);
+
+	}
+
+	private boolean registerUser(String appid, UserSignature signature,
+			String userId) throws AlreadyExistException,
+			JsonGenerationException, JsonMappingException, IOException {
+		UserAccount userAccount;
 		String registrationId = signature.getRegistrationId();
 		// set value of sender/serverside user registration code
 		if (registrationId == null) {
@@ -205,11 +221,7 @@ public class AccountController extends SCController {
 		}
 
 		return true;
-
 	}
-
-	// TODO DELETE method instead of GET
-	// TODO client flow, userid required as input
 	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/user/{appid:.*}")
 	public @ResponseBody
 	boolean unregisterUserToPush(HttpServletRequest request,
@@ -218,6 +230,22 @@ public class AccountController extends SCController {
 			SmartCampusException, AlreadyExistException {
 
 		String userId = getUserId();
+		return unregisterUser(appid, userId);
+
+	}
+	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/appuser/{appid}/{user}")
+	public @ResponseBody
+	boolean unregisterAPpUserToPush(HttpServletRequest request,
+			@PathVariable String appid, @PathVariable String user, HttpSession session)
+			throws DataException, IOException, NotFoundException,
+			SmartCampusException, AlreadyExistException {
+
+		String userId = user;
+		return unregisterUser(appid, userId);
+
+	}
+
+	private boolean unregisterUser(String appid, String userId) {
 		UserAccount userAccount;
 
 		List<UserAccount> listUser = userAccountManager.findByUserIdAndAppName(
@@ -232,11 +260,8 @@ public class AccountController extends SCController {
 		}
 
 		return true;
-
 	}
 
-	// TODO DELETE method instead of GET
-	// TODO client flow, userid required as input
 	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/app/{appid:.*}")
 	public @ResponseBody
 	boolean unregisterAppToPush(HttpServletRequest request,
@@ -308,7 +333,6 @@ public class AccountController extends SCController {
 		}
 	}
 
-	// TODO client flow
 	@RequestMapping(method = RequestMethod.GET, value = "/configuration/app/{appid:.*}")
 	public @ResponseBody
 	AppSignature requestAppConfigurationToPush(
@@ -336,7 +360,6 @@ public class AccountController extends SCController {
 
 	}
 
-	// TODO client flow
 	@RequestMapping(method = RequestMethod.GET, value = "/configuration/user/{appid:.*}")
 	public @ResponseBody
 	Map<String, String> requestUserConfigurationToPush(
@@ -363,7 +386,6 @@ public class AccountController extends SCController {
 
 	}
 	
-	// TODO client flow
 		@RequestMapping(method = RequestMethod.GET, value = "/configuration/public/{appid:.*}")
 		public @ResponseBody
 		Map<String, String> requestPublicAppConfigurationToPush(
