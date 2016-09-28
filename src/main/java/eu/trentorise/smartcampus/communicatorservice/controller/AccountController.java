@@ -167,7 +167,12 @@ public class AccountController extends SCController {
 			NotFoundException, SmartCampusException, AlreadyExistException {
 
 		String userId = user;
-		String tokenUserId = getUserId();
+		String tokenUserId = null;
+		try {
+			tokenUserId = getUserId();
+		} catch (Exception e) {
+			// skip
+		}
 		if (tokenUserId != null && ! tokenUserId.equals(userId)) {
 			throw new IllegalArgumentException("Cannot register arbitrary user within a user flow.");				
 		}
@@ -188,16 +193,14 @@ public class AccountController extends SCController {
 
 		String appName = signature.getAppName();
 
-		List<UserAccount> listUser = userAccountManager.findByUserIdAndAppName(
+		userAccount = userAccountManager.findByUserIdAndAppName(
 				userId, appName);
 
-		if (listUser.isEmpty()) {
+		if (userAccount != null) {
 			userAccount = new UserAccount();
 			userAccount.setAppId(appid);
 			userAccount.setUserId(userId);
 			userAccountManager.save(userAccount);
-		} else {
-			userAccount = listUser.get(0);
 		}
 
 		List<Configuration> listConf = userAccount.getConfigurations();
@@ -234,37 +237,46 @@ public class AccountController extends SCController {
 			SmartCampusException, AlreadyExistException {
 
 		String userId = getUserId();
-		return unregisterUser(appid, userId);
+		return unregisterUser(appid, userId, null);
 
 	}
 	@RequestMapping(method = RequestMethod.DELETE, value = "/unregister/appuser/{appid}/{user}")
 	public @ResponseBody
-	boolean unregisterAPpUserToPush(HttpServletRequest request,
+	boolean unregisterAppUserToPush(HttpServletRequest request,
+			@RequestParam(required=false) String registrationId,
 			@PathVariable String appid, @PathVariable String user, HttpSession session)
 			throws DataException, IOException, NotFoundException,
 			SmartCampusException, AlreadyExistException {
 
 		String userId = user;
-		String tokenUserId = getUserId();
+		String tokenUserId = null;
+		try {
+			tokenUserId = getUserId();
+		} catch (Exception e) {
+			// skip
+		}
 		if (tokenUserId != null && ! tokenUserId.equals(userId)) {
 			throw new IllegalArgumentException("Cannot register arbitrary user within a user flow.");				
 		}
-		return unregisterUser(appid, userId);
+		return unregisterUser(appid, userId, registrationId);
 
 	}
 
-	private boolean unregisterUser(String appid, String userId) {
-		UserAccount userAccount;
+	private boolean unregisterUser(String appid, String userId, String registrationId) {
+		UserAccount userAccount = userAccountManager.findByUserIdAndAppName(userId, appid);
 
-		List<UserAccount> listUser = userAccountManager.findByUserIdAndAppName(
-				userId, appid);
-
-		if (!listUser.isEmpty()) {
-			userAccount = listUser.get(0);
-
-			userAccount.setConfigurations(null);
+		if (userAccount != null) {
+			if (registrationId == null) {
+				userAccount.setConfigurations(null);
+			} else if (userAccount.getConfigurations() != null) {
+				for (int i = 0; i < userAccount.getConfigurations().size(); i++) {
+					if (userAccount.getConfigurations().get(i).getPrivateKey().containsValue(registrationId)) {
+						userAccount.getConfigurations().remove(i);
+						break;
+					}
+				}
+			}
 			userAccountManager.update(userAccount);
-
 		}
 
 		return true;
@@ -378,17 +390,14 @@ public class AccountController extends SCController {
 		Map<String, String> result = new HashMap<String, String>();
 
 		String userid = getUserId();
-		List<UserAccount> list = userAccountManager.findByUserIdAndAppName(
+		UserAccount userAccount = userAccountManager.findByUserIdAndAppName(
 				userid, appid);
-		for (UserAccount index : list) {
-			if (index != null && !index.getConfigurations().isEmpty()) {
-				for (Configuration x : index.getConfigurations()) {
-					result.putAll(x.getPrivateKey());
-					if(x.getPublicKey()!=null)
-					result.putAll(x.getPublicKey());
-				}
+		if (userAccount != null && !userAccount.getConfigurations().isEmpty()) {
+			for (Configuration x : userAccount.getConfigurations()) {
+				result.putAll(x.getPrivateKey());
+				if(x.getPublicKey()!=null)
+				result.putAll(x.getPublicKey());
 			}
-
 		}
 		return result;
 

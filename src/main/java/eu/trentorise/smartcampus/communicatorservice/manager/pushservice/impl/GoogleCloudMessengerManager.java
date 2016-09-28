@@ -100,11 +100,11 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 
 		String registrationId = "";
 
-		List<UserAccount> listUserAccount = userAccountManager.findByUserIdAndAppName(notification.getUser(), senderAppName);
+		UserAccount listUserAccount = userAccountManager.findByUserIdAndAppName(notification.getUser(), senderAppName);
 
-		if (!listUserAccount.isEmpty() && sender != null) {
+		if (listUserAccount != null && sender != null) {
 
-			UserAccount userAccountSelected = listUserAccount.get(0);
+			UserAccount userAccountSelected = listUserAccount;
 
 			List<Configuration> listConfUser = userAccountSelected.getConfigurations();
 			if (listConfUser != null && !listConfUser.isEmpty()) {

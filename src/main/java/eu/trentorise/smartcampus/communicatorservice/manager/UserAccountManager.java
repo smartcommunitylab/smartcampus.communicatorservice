@@ -120,11 +120,11 @@ public class UserAccountManager {
 	 * 
 	 * @return a list of UserAccount of the given user id and appName
 	 */
-	public List<UserAccount> findByUserIdAndAppName(String userid, String appId) {
+	public UserAccount findByUserIdAndAppName(String userid, String appId) {
 		Criteria criteria = new Criteria();
 		criteria = criteria.and("userId").is(userid);
 		criteria = criteria.and("appId").is(appId);
-		return db.find(Query.query(criteria), UserAccount.class);
+		return db.findOne(Query.query(criteria), UserAccount.class);
 	}
 
 	/**
