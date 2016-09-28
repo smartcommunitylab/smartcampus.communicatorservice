@@ -196,7 +196,7 @@ public class AccountController extends SCController {
 		userAccount = userAccountManager.findByUserIdAndAppName(
 				userId, appName);
 
-		if (userAccount != null) {
+		if (userAccount == null) {
 			userAccount = new UserAccount();
 			userAccount.setAppId(appid);
 			userAccount.setUserId(userId);
