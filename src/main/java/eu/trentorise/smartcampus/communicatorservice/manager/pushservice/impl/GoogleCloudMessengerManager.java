@@ -142,7 +142,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 					if (CloudToPushType.GOOGLE.compareTo(index.getKey()) == 0) {
 						registrationId = index.get(gcm_registration_id_key);
 						if (registrationId != null) {
-							String platform = null;//index.get("platform");
+							String platform = index.getPrivateKey().get("platform");
 							if ("android".equalsIgnoreCase(platform)) {
 								regIds.add(registrationId);
 							} else {
