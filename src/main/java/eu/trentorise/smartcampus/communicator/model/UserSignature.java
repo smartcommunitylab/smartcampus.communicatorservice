@@ -11,6 +11,8 @@ public class UserSignature {
 	private String appName;
 
 	private String registrationId;
+	
+	private String platform;
 
 	public String getAppName() {
 		return appName;
@@ -28,4 +30,13 @@ public class UserSignature {
 		this.registrationId = registrationId;
 	}
 
+	public String getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(String platform) {
+		this.platform = platform;
+	}
+	
+	
 }

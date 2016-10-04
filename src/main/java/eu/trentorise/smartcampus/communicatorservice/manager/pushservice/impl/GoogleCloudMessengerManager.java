@@ -133,26 +133,41 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 				message.addData("title", notification.getTitle());
 				
 				message.priority(Priority.HIGH);
-				com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
-				builder.title(notification.getTitle()).body(notification.getDescription());
-				message.notification(builder.build());
 				
-
 				List<String> regIds = new ArrayList<String>();
+				List<String> iosRegIds = new ArrayList<String>();
+				
 				for (Configuration index : listConfUser) {
 					if (CloudToPushType.GOOGLE.compareTo(index.getKey()) == 0) {
 						registrationId = index.get(gcm_registration_id_key);
 						if (registrationId != null) {
-							regIds.add(registrationId);
+							String platform = index.get("platform");
+							if ("android".equalsIgnoreCase(platform)) {
+								regIds.add(registrationId);
+							} else {
+								iosRegIds.add(registrationId);
+							}
 						}
 					}
 				}
 
 
 				try {
-					logger.info("Sending push to "+regIds);
-					MulticastResult result = sender.send(message.build(), regIds, 1);
-					logger.info("Push result "+result);
+					if (regIds.size() > 0) {
+						logger.info("Sending android push to "+regIds);
+						MulticastResult result = sender.send(message.build(), regIds, 1);
+						logger.info("Android push result "+result);
+					}
+					if (iosRegIds.size() > 0) {
+						com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
+						builder.title(notification.getTitle()).body(notification.getDescription());
+						message.notification(builder.build());
+
+						logger.info("Sending iOS push to "+iosRegIds);
+						MulticastResult result = sender.send(message.build(), iosRegIds, 1);
+						logger.info("iOS push result "+result);
+					}
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 					throw new PushException(e);

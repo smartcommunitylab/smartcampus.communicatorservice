@@ -219,6 +219,9 @@ public class AccountController extends SCController {
 		if (!exists) {
 			Map<String, String> listvalue = new HashMap<String, String>();
 			listvalue.put(gcm_registration_id_key, registrationId);
+			if (signature.getPlatform() != null) {
+				listvalue.put("platform", signature.getPlatform());
+			}
 
 			Configuration e = new Configuration(CloudToPushType.GOOGLE, listvalue);
 			listConf.add(e);
