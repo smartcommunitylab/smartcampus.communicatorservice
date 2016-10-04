@@ -138,10 +138,11 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 				List<String> iosRegIds = new ArrayList<String>();
 				
 				for (Configuration index : listConfUser) {
+					
 					if (CloudToPushType.GOOGLE.compareTo(index.getKey()) == 0) {
 						registrationId = index.get(gcm_registration_id_key);
 						if (registrationId != null) {
-							String platform = index.get("platform");
+							String platform = null;//index.get("platform");
 							if ("android".equalsIgnoreCase(platform)) {
 								regIds.add(registrationId);
 							} else {
