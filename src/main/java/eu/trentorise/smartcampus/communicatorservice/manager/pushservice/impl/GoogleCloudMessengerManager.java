@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Message.Priority;
+import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 
@@ -149,7 +150,9 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 
 
 				try {
-					sender.send(message.build(), regIds, 1);
+					logger.info("Sending push to "+regIds);
+					MulticastResult result = sender.send(message.build(), regIds, 1);
+					logger.info("Push result "+result);
 				} catch (Exception e) {
 					e.printStackTrace();
 					throw new PushException(e);
