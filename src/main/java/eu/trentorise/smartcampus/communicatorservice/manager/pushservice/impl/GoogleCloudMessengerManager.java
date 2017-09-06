@@ -236,9 +236,21 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 //			message.notification(builder.build());
 			
 			try {
-				System.err.println("SENDING " + message);
-				Result sendresult = sender.send(message.build(), Constants.TOPIC_PREFIX + topic, 1);
-				System.err.println(sendresult);
+				logger.info("SENDING ANDROID " + message);
+				Result sendresult = sender.send(message.build(), Constants.TOPIC_PREFIX + topic +".android", 1);
+				logger.info("SENDING ANDROID RESULT " + sendresult);
+				
+				// REQUIRED ON IOS TO WORK
+				com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
+				builder.title(notification.getTitle()).body(notification.getDescription());
+				message.notification(builder.build());
+				logger.info("SENDING IOS " + message);
+				sendresult = sender.send(message.build(), Constants.TOPIC_PREFIX + topic+".ios", 1);
+				logger.info("SENDING IOS RESULT " + sendresult);
+				logger.info("SENDING LEGACY " + message);
+				sendresult = sender.send(message.build(), Constants.TOPIC_PREFIX + topic, 1);
+				logger.info("SENDING LEGACY RESULT " + sendresult);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new PushException(e);
