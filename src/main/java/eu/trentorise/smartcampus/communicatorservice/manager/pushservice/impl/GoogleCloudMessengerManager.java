@@ -1,6 +1,8 @@
 package eu.trentorise.smartcampus.communicatorservice.manager.pushservice.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -256,6 +258,32 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 				throw new PushException(e);
 			}
 		}
+	}
+	
+	public static void main(String[] args) throws IOException {
+//		Message.Builder message = new Message.Builder().collapseKey("").delayWhileIdle(true);
+//		message.addData("content-available", "1");
+//		message.addData("body", "aa");
+//		message.addData("title", "bb");
+//		message.priority(Priority.HIGH);
+		
+		Message.Builder message = new Message.Builder().collapseKey("").delayWhileIdle(true).addData("title", "aa").addData("description", "bbb");
+		
+		message.addData("content-available", "1");
+		message.addData("body", "bbb");
+		message.addData("title", "ttt");
+		message.priority(Priority.HIGH);
+
+		com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
+		builder.title("title").body("body");
+		message.notification(builder.build());
+		Message build = message.build();
+		Sender sender = new Sender("AIzaSyA5ekqwW6vojWHbM2YeZicHWdBX-R2JRjo");
+		Result send = sender.send(build, "/topics/mobility.trentoplaygo.test.ios", 1);
+//		MulticastResult send = sender.send(build, Collections.singletonList("lybcFD07Se4:APA91bFoeloKNNHjupSodvPm2SXs75xDq_wGSN8QTi_jE7tvR6rDhErzcGlIN7UHuBJLEr-4imInCbCgyjFjEDmYpCRtrGEbDPWzVDTT5NiwW-I3bSINBhIdtqDjXAbgfRG39sWwusE8"), 1);
+
+//		
+		System.err.println(send);
 	}
 
 }
