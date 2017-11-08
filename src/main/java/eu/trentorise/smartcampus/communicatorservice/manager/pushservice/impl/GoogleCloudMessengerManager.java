@@ -176,7 +176,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 
 						logger.info("Sending iOS push to "+iosRegIds);
 						MulticastResult result = sender.send(message.build(), iosRegIds, 1);
-						cleanRegistrations(userAccountSelected, regIds, result.getResults());
+						cleanRegistrations(userAccountSelected, iosRegIds, result.getResults());
 						logger.info("iOS push result "+result);
 					}
 					
