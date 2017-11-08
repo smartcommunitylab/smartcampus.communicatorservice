@@ -2,10 +2,13 @@ package eu.trentorise.smartcampus.communicatorservice.manager.pushservice.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.cxf.common.util.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.slf4j.Logger;
@@ -26,6 +29,7 @@ import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
 import eu.trentorise.smartcampus.communicator.model.Configuration;
 import eu.trentorise.smartcampus.communicator.model.Notification;
 import eu.trentorise.smartcampus.communicator.model.UserAccount;
+import eu.trentorise.smartcampus.communicatorservice.exceptions.AlreadyExistException;
 import eu.trentorise.smartcampus.communicatorservice.exceptions.NoUserAccount;
 import eu.trentorise.smartcampus.communicatorservice.exceptions.PushException;
 import eu.trentorise.smartcampus.communicatorservice.manager.AppAccountManager;
@@ -77,6 +81,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 	
 	private void sendToCloudUser(Notification notification) throws NotFoundException, NoUserAccount, PushException {
 
+		
 		// in default case is the system messenger that send
 		String senderId = null;
 		Sender sender = null;
@@ -102,6 +107,8 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		sender = new Sender(senderId);
 
 		String registrationId = "";
+
+		logger.info("Sending message to user: "+senderAppName+" -> "+notification.getUser());
 
 		UserAccount listUserAccount = userAccountManager.findByUserIdAndAppName(notification.getUser(), senderAppName);
 
@@ -159,6 +166,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 					if (regIds.size() > 0) {
 						logger.info("Sending android push to "+regIds);
 						MulticastResult result = sender.send(message.build(), regIds, 1);
+						cleanRegistrations(userAccountSelected, regIds, result.getResults());
 						logger.info("Android push result "+result);
 					}
 					if (iosRegIds.size() > 0) {
@@ -168,6 +176,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 
 						logger.info("Sending iOS push to "+iosRegIds);
 						MulticastResult result = sender.send(message.build(), iosRegIds, 1);
+						cleanRegistrations(userAccountSelected, regIds, result.getResults());
 						logger.info("iOS push result "+result);
 					}
 					
@@ -180,6 +189,31 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		} else {
 			throw new NoUserAccount("The user "+notification.getUser()+" is not register for receive push notification");
 		}
+	}
+
+	/**
+	 * @param userAccountSelected 
+	 * @param regIds
+	 * @param results
+	 * @throws AlreadyExistException 
+	 */
+	private void cleanRegistrations(UserAccount account, List<String> regIds, List<Result> results) throws AlreadyExistException {
+		Set<String> toRemove = new HashSet<String>();
+		for (int i = 0; i < results.size(); i++) {
+			Result res = results.get(i);
+			if (StringUtils.isEmpty(res.getMessageId())) {
+				toRemove.add(res.getCanonicalRegistrationId());
+			}
+		}
+		List<Configuration> configs = new LinkedList<Configuration>();
+		for (Configuration c : account.getConfigurations()) {
+			if (c.get(gcm_registration_id_key) != null && !toRemove.contains(c.get(gcm_registration_id_key))) {
+				configs.add(c);
+			}
+		}
+		logger.info("cleaning user ("+account.getUserId()+") configs: "+toRemove);
+		account.setConfigurations(configs);
+		userAccountManager.update(account);
 	}
 
 	private void sendToCloudTopics(Notification notification) throws PushException, NotFoundException {
