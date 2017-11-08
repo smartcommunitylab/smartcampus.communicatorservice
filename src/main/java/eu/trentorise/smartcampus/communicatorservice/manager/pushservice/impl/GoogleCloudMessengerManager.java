@@ -202,7 +202,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		for (int i = 0; i < results.size(); i++) {
 			Result res = results.get(i);
 			if (StringUtils.isEmpty(res.getMessageId())) {
-				toRemove.add(res.getCanonicalRegistrationId());
+				toRemove.add(regIds.get(i));
 			}
 		}
 		List<Configuration> configs = new LinkedList<Configuration>();
