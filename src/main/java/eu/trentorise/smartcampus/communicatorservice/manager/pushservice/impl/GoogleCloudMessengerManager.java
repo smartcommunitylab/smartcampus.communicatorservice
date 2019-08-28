@@ -292,32 +292,5 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 			}
 		}
 	}
-	
-	public static void main(String[] args) throws IOException {
-//		Message.Builder message = new Message.Builder().collapseKey("").delayWhileIdle(true);
-//		message.addData("content-available", "1");
-//		message.addData("body", "aa");
-//		message.addData("title", "bb");
-//		message.priority(Priority.HIGH);
-		
-		Message.Builder message = new Message.Builder().collapseKey("").delayWhileIdle(true).addData("title", "aa").addData("description", "bbb");
-		
-		message.addData("content-available", "1");
-		message.addData("alert", "Test");
-		message.addData("body", "bbb");
-		message.addData("title", "ttt");
-		message.priority(Priority.HIGH);
-
-		com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
-		builder.title("title").body("body");
-		message.notification(builder.build());
-		Message build = message.build();
-		FCMSender sender = new FCMSender("AIzaSyCxawQRX979fcj25pMPY3rWf2khcibw77k");
-		Result send = sender.send(build, "/topics/ugas.trento.comms.scuola.ios", 1);
-//		MulticastResult send = sender.send(build, Collections.singletonList("lybcFD07Se4:APA91bFoeloKNNHjupSodvPm2SXs75xDq_wGSN8QTi_jE7tvR6rDhErzcGlIN7UHuBJLEr-4imInCbCgyjFjEDmYpCRtrGEbDPWzVDTT5NiwW-I3bSINBhIdtqDjXAbgfRG39sWwusE8"), 1);
-
-//		
-		System.err.println(send);
-	}
 
 }
