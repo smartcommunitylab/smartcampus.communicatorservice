@@ -22,7 +22,6 @@ import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Message.Priority;
 import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Result;
-import com.google.android.gcm.server.Sender;
 
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
 import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
@@ -84,7 +83,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		
 		// in default case is the system messenger that send
 		String senderId = null;
-		Sender sender = null;
+		FCMSender sender = null;
 		String senderAppName = notification.getAuthor().getAppId();
 
 		AppAccount appAccount;
@@ -104,7 +103,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 			}
 		}
 
-		sender = new Sender(senderId);
+		sender = new FCMSender(senderId);
 
 		String registrationId = "";
 
@@ -218,7 +217,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 
 	private void sendToCloudTopics(Notification notification) throws PushException, NotFoundException {
 		String senderId = null;
-		Sender sender = null;
+		FCMSender sender = null;
 		String senderAppName = notification.getAuthor().getAppId();
 
 		AppAccount appAccount;
@@ -238,7 +237,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 			}
 		}
 
-		sender = new Sender(senderId);
+		sender = new FCMSender(senderId);
 
 		for (String topic : notification.getChannelIds()) {
 
@@ -304,6 +303,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		Message.Builder message = new Message.Builder().collapseKey("").delayWhileIdle(true).addData("title", "aa").addData("description", "bbb");
 		
 		message.addData("content-available", "1");
+		message.addData("alert", "Test");
 		message.addData("body", "bbb");
 		message.addData("title", "ttt");
 		message.priority(Priority.HIGH);
@@ -312,8 +312,8 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		builder.title("title").body("body");
 		message.notification(builder.build());
 		Message build = message.build();
-		Sender sender = new Sender("AIzaSyA5ekqwW6vojWHbM2YeZicHWdBX-R2JRjo");
-		Result send = sender.send(build, "/topics/mobility.trentoplaygo.test.ios", 1);
+		FCMSender sender = new FCMSender("AIzaSyCxawQRX979fcj25pMPY3rWf2khcibw77k");
+		Result send = sender.send(build, "/topics/ugas.trento.comms.scuola.ios", 1);
 //		MulticastResult send = sender.send(build, Collections.singletonList("lybcFD07Se4:APA91bFoeloKNNHjupSodvPm2SXs75xDq_wGSN8QTi_jE7tvR6rDhErzcGlIN7UHuBJLEr-4imInCbCgyjFjEDmYpCRtrGEbDPWzVDTT5NiwW-I3bSINBhIdtqDjXAbgfRG39sWwusE8"), 1);
 
 //		
