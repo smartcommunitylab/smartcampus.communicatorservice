@@ -1,6 +1,5 @@
 package eu.trentorise.smartcampus.communicatorservice.manager.pushservice.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -268,9 +267,9 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 			message.priority(Priority.HIGH);
 
 			// REQUIRED ON IOS TO WORK
-//			com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
-//			builder.title(notification.getTitle()).body(notification.getDescription());
-//			message.notification(builder.build());
+			com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
+			builder.title(notification.getTitle()).body(notification.getDescription());
+			message.notification(builder.build());
 			
 			try {
 				logger.info("SENDING ANDROID " + message);
@@ -278,9 +277,6 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 				logger.info("SENDING ANDROID RESULT " + sendresult);
 				
 				// REQUIRED ON IOS TO WORK
-				com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
-				builder.title(notification.getTitle()).body(notification.getDescription());
-				message.notification(builder.build());
 				logger.info("SENDING IOS " + message);
 				sendresult = sender.send(message.build(), Constants.TOPIC_PREFIX + topic+".ios", 1);
 				logger.info("SENDING IOS RESULT " + sendresult);
