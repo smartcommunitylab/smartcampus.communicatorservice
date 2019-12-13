@@ -63,7 +63,6 @@ public class NotificationController extends SCController {
 		return services;
 	}
 
-
 	// Notification by app
 
 	@RequestMapping(method = RequestMethod.GET, value = "/app/public/notification/{capp:.*}")
@@ -252,5 +251,4 @@ public class NotificationController extends SCController {
 		SyncData out = notificationManager.synchronizeByApp(userId, capp, syncReq.getSyncData());
 		return new ResponseEntity<SyncData>(out,HttpStatus.OK);
 	}
-
 }

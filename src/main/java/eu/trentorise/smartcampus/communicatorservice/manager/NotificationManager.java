@@ -15,13 +15,21 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.communicatorservice.manager;
 
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import eu.trentorise.smartcampus.communicator.model.AppAccount;
 import eu.trentorise.smartcampus.communicator.model.CloudToPushType;
@@ -40,6 +48,11 @@ import eu.trentorise.smartcampus.presentation.data.SyncData;
 @Component
 public class NotificationManager {
 	
+	/**
+	 * 
+	 */
+	private static final int MAX_CACHE_SIZE = 1000;
+
 	private static final Logger logger = Logger
 			.getLogger(NotificationManager.class);
 
@@ -51,6 +64,31 @@ public class NotificationManager {
 
 	@Autowired
 	GoogleCloudMessengerManager googleManager;
+
+	
+	/**
+	 * Take last week of notifications
+	 */
+	private CacheLoader<String, NotificationCache> loader = new CacheLoader<String, NotificationCache>() {
+
+		@Override
+		public NotificationCache load(String key) throws Exception {
+			Calendar c = Calendar.getInstance();
+			c.add(Calendar.DATE, -7);
+			Long since = c.getTimeInMillis();
+			List<Notification> list = storage.searchNotifications(null, key, since, 0, MAX_CACHE_SIZE, null);
+			if (list == null) list = Collections.emptyList();
+			return new NotificationCache(list, since);
+		}
+		
+	};
+
+	private LoadingCache<String, NotificationCache> notificationCache =  CacheBuilder.newBuilder()
+		       .maximumSize(100)
+		       .expireAfterWrite(1, TimeUnit.DAYS)
+		       .build(loader);
+	
+
 
 	@Autowired
 	ApplePushNotificationServiceManager appleManager;
@@ -64,6 +102,10 @@ public class NotificationManager {
 		storage.storeObject(notification);
 		
 		if(notification.getAuthor().getAppId()!=null){
+			// app notification, refresh the cache
+			if (notification.getUser() == null) {
+				notificationCache.refresh(notification.getAuthor().getAppId());
+			}
 			
 			List<AppAccount> listApp = appAccountManager
 					.getAppAccounts(notification.getAuthor().getAppId());
@@ -133,11 +175,21 @@ public class NotificationManager {
 		return true;
 	}
 
-	public List<Notification> get(String userId, String capp, Long since,
-			Integer position, Integer count, NotificationFilter filter)
-			throws DataException {
-		return storage.searchNotifications(userId, capp, since, position,
-				count, filter);
+	public List<Notification> get(String userId, String capp, Long since, Integer position, Integer count, NotificationFilter filter) throws DataException {
+		if (userId == null) {
+			try {
+				NotificationCache cached = notificationCache.get(capp);
+				int pos = position != null ? position : 0;
+				int c = count != null ? count : 100;
+				if (cached.since <= since && pos + c < MAX_CACHE_SIZE) {
+					int max = pos + c > cached.notifications.size() ? cached.notifications.size() : pos + c; 
+					return cached.notifications.subList(pos, max);
+				}
+			} catch (ExecutionException e) {
+				logger.error("Error reading cached data: "+ e.getMessage(), e);
+			}
+		}
+		return storage.searchNotifications(userId, capp, since, position, count, filter);
 	}
 
 	public Notification getById(String id) throws NotFoundException,
@@ -282,6 +334,21 @@ public class NotificationManager {
 		SyncData output = storage.getSyncData(input.getVersion(), userId, true, include, exclude);
 		storage.cleanSyncData(input, userId, capp);
 		return output;
+	}
+
+
+	private static class NotificationCache {
+		/**
+		 * @param list
+		 * @param since2
+		 */
+		public NotificationCache(List<Notification> list, Long since) {
+			this.notifications = list; 
+			this.since = since;
+		}
+		private List<Notification> notifications;
+		private Long since;
+		
 	}
 
 }
