@@ -178,11 +178,20 @@ public class NotificationManager {
 	public List<Notification> get(String userId, String capp, Long since, Integer position, Integer count, NotificationFilter filter) throws DataException {
 		if (userId == null) {
 			try {
+				if (since == null) since = System.currentTimeMillis();
 				NotificationCache cached = notificationCache.get(capp);
 				int pos = position != null ? position : 0;
 				int c = count != null ? count : 100;
+				
+				int sublistSize = 0;
+				for (Notification n : cached.notifications) {
+					if (n.getTimestamp() >= since) sublistSize++;
+					else break;
+				}
+				if (pos >= sublistSize) return Collections.emptyList();
+				
 				if (cached.since <= since && pos + c < MAX_CACHE_SIZE) {
-					int max = pos + c > cached.notifications.size() ? cached.notifications.size() : pos + c; 
+					int max = (pos + c) > sublistSize ? sublistSize : (pos + c); 
 					return cached.notifications.subList(pos, max);
 				}
 			} catch (ExecutionException e) {

@@ -166,9 +166,7 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 						com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
 						builder.title(notification.getTitle()).body(notification.getDescription());
 						message.notification(builder.build());
-
 						Message n = message.build();
-						logger.info("message " + mapper.writeValueAsString(n));;
 						MulticastResult result = sender.send(n, regIds, 1);
 						cleanRegistrations(userAccountSelected, regIds, result.getResults());
 						logger.info("Android push result "+result);
