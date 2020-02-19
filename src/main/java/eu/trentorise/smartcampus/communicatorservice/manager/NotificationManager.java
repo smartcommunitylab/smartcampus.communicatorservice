@@ -73,11 +73,13 @@ public class NotificationManager {
 
 		@Override
 		public NotificationCache load(String key) throws Exception {
-			Calendar c = Calendar.getInstance();
-			c.add(Calendar.DATE, -7);
-			Long since = c.getTimeInMillis();
+//			Calendar c = Calendar.getInstance();
+//			c.add(Calendar.DATE, -7);
+//			Long since = c.getTimeInMillis();
+			Long since = 0l;
 			List<Notification> list = storage.searchNotifications(null, key, since, 0, MAX_CACHE_SIZE, null);
 			if (list == null) list = Collections.emptyList();
+			if (list.size() > 0) since = list.get(list.size()-1).getTimestamp();
 			return new NotificationCache(list, since);
 		}
 		
@@ -189,11 +191,9 @@ public class NotificationManager {
 					else break;
 				}
 				if (pos >= sublistSize) return Collections.emptyList();
-				
-				if (cached.since <= since && pos + c < MAX_CACHE_SIZE) {
-					int max = (pos + c) > sublistSize ? sublistSize : (pos + c); 
-					return cached.notifications.subList(pos, max);
-				}
+
+				int max = (pos + c) > sublistSize ? sublistSize : (pos + c); 
+				return cached.notifications.subList(pos, max);
 			} catch (ExecutionException e) {
 				logger.error("Error reading cached data: "+ e.getMessage(), e);
 			}
