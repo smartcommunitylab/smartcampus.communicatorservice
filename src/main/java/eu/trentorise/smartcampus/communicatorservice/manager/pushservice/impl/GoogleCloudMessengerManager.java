@@ -1,10 +1,12 @@
 package eu.trentorise.smartcampus.communicatorservice.manager.pushservice.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.cxf.common.util.StringUtils;
@@ -293,4 +295,43 @@ public class GoogleCloudMessengerManager implements PushServiceCloud {
 		}
 	}
 
+	public static void main(String[] args) throws PushException {
+		FCMSender sender = new FCMSender("AAAAiij7hrg:APA91bFJF-_5mW-oMHK87ntYqfki5627tumHf4Opim0raPlj_DzdL6o9XLuHb-xcViKghr8mJIkVQszH2RdhSYB9KAL9M2oz1vtJqwe53teAKdVc2AGVdi-qKyi9Ep2l_cQOxItEFq9r");
+
+		Message.Builder message = new Message.Builder().collapseKey("").delayWhileIdle(true).addData("title", "tit").addData("description", "descr");
+		Map<String, Object> content = new HashMap<String, Object>();
+		if (content != null) {
+			for (String key :  content.keySet()) {
+				if (key.startsWith("_")) {
+					continue;
+				}
+				if (content.get(key) != null) {
+					message.addData("content." + key, content.get(key).toString());
+				}
+			}
+		}
+		message.addData("content-available", "1");
+		message.addData("body", "descr");
+		message.addData("title", "tit");
+		message.priority(Priority.HIGH);
+
+		// REQUIRED ON IOS TO WORK
+		com.google.android.gcm.server.Notification.Builder builder = new com.google.android.gcm.server.Notification.Builder("");
+		builder.title("tit").body("descr");
+		message.notification(builder.build());
+		
+		try {
+			Result sendresult = sender.send(message.build(), Constants.TOPIC_PREFIX + "ferraraplaygo" +".android", 1);
+			
+			// REQUIRED ON IOS TO WORK
+			sendresult = sender.send(message.build(), Constants.TOPIC_PREFIX + "ferraraplaygo"+".ios", 1);
+			sendresult = sender.send(message.build(), Constants.TOPIC_PREFIX + "ferraraplaygo", 1);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new PushException(e);
+		}
+
+	}
+	
 }
